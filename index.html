@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Philosophical Dialogue</title>
+    
+    <!-- 1. Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- 2. Minimal CSS -->
+    <style>
+        /* Global Reset */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            background: #e5ddd5;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #1a1a1a;
+            line-height: 1.6;
+            overflow: hidden;
+        }
+
+        #root {
+            height: 100%;
+        }
+
+        .void-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 0;
+            background-color: #ffffff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        /* Telegram-style Header */
+        .chat-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e4e4e4;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 54px;
+            position: relative;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .hamburger-menu {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            padding: 4px;
+        }
+
+        .hamburger-line {
+            width: 20px;
+            height: 2px;
+            background-color: #707579;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-menu:hover .hamburger-line {
+            background-color: #000000;
+        }
+
+        .chat-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #000000;
+        }
+
+        /* Side Menu (Telegram-style) */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100%;
+            background-color: #ffffff;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .side-menu.open {
+            transform: translateX(0);
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 999;
+        }
+
+        .menu-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .menu-header {
+            padding: 16px;
+            border-bottom: 1px solid #e4e4e4;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .menu-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #000000;
+        }
+
+        .menu-close {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #707579;
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .menu-close:hover {
+            color: #000000;
+        }
+
+        .menu-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s ease;
+        }
+
+        .menu-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .menu-item-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #707579;
+        }
+
+        .menu-item-label {
+            flex: 1;
+            font-size: 15px;
+            color: #000000;
+        }
+
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background-color: #ccc;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background-color: #3390ec;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+
+        .dialogue-log {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px 16px;
+            background-color: #e5ddd5;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0,0,0,0.2) transparent;
+        }
+        .dialogue-log::-webkit-scrollbar {
+            width: 6px;
+        }
+        .dialogue-log::-webkit-scrollbar-thumb {
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 3px;
+        }
+
+        .entry {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-end;
+            animation: messageSlideIn 0.3s ease-out;
+        }
+
+        .entry.speaker-a {
+            justify-content: flex-start;
+        }
+
+        .entry.speaker-b {
+            justify-content: flex-end;
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-bubble {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+            word-wrap: break-word;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            text-indent: 0;
+            overflow-wrap: break-word;
+            font-kerning: none;
+            text-rendering: optimizeLegibility;
+        }
+
+        .entry.speaker-a .message-bubble {
+            background-color: #ffffff;
+            color: #1a1a1a;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .entry.speaker-b .message-bubble {
+            background-color: #dcf8c6;
+            color: #1a1a1a;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .text {
+            font-size: 15px;
+            line-height: 1.4;
+            text-align: left;
+            display: block;
+            margin: 0;
+            padding: 0;
+            text-indent: 0;
+            word-spacing: 0;
+            letter-spacing: 0;
+        }
+        
+        .text > *:first-child {
+            margin-left: 0;
+            padding-left: 0;
+        }
+
+        /* Smooth word fade-in animation like ChatGPT/Gemini */
+        .word {
+            display: inline-block;
+            vertical-align: baseline;
+            margin: 0;
+            padding: 0;
+            opacity: 0;
+            animation: wordFadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes wordFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(3px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Thinking bubble animation */
+        .thinking-bubble {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            animation: messageSlideIn 0.3s ease-out;
+        }
+
+        .thinking-bubble.speaker-a {
+            justify-content: flex-start;
+        }
+
+        .thinking-bubble.speaker-b {
+            justify-content: flex-end;
+        }
+
+        .thinking-bubble-content {
+            background-color: #ffffff;
+            border-radius: 18px;
+            padding: 12px 16px;
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .thinking-bubble.speaker-b .thinking-bubble-content {
+            background-color: #dcf8c6;
+        }
+
+        .thinking-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #999;
+            animation: thinkingPulse 1.4s ease-in-out infinite;
+        }
+
+        .thinking-bubble.speaker-b .thinking-dot {
+            background-color: #999;
+        }
+
+        .thinking-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .thinking-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .thinking-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes thinkingPulse {
+            0%, 60%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            30% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        /* Loading state styling */
+        .status-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            opacity: 0.5;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-align: center;
+            width: 100%;
+            max-width: 680px;
+            z-index: 1000;
+        }
+        .error {
+            color: #d32f2f;
+            opacity: 1;
+        }
+
+    </style>
+
+    <!-- 3. Dependencies -->
+    <!-- React -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- WebLLM: Loads as an ES module and attaches to window for React to use -->
+    <script type="module">
+        // Using esm.run as a more robust alternative for dynamic ESM imports in browser environments.
+        // It correctly handles dependencies and avoids common 'Invalid URL' issues from raw jsdelivr imports.
+        import * as webllm from "https://esm.run/@mlc-ai/web-llm";
+        window.webllm = webllm;
+    </script>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <!-- 4. React Application -->
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Configuration for the in-browser model
+        // Llama-3.2-1B is chosen for its small size and decent instruction following.
+        const MODEL_ID = "Llama-3.2-1B-Instruct-q4f16_1-MLC";
+        
+        // System prompts for two different philosopher personalities - more casual and human
+        const PHILOSOPHER_A_PROMPT = `
+You are a casual, optimistic person named A talking about existence.
+You're curious and hopeful. You think life has meaning we create ourselves.
+Talk like a normal person having a conversation - use casual language, contractions, and natural speech.
+Keep it brief (1-2 sentences) and conversational.
+`.trim();
+
+        const PHILOSOPHER_B_PROMPT = `
+You are a casual, skeptical person named B talking about existence.
+You're a bit cynical and question if anything really matters.
+Talk like a normal person having a conversation - use casual language, contractions, and natural speech.
+Keep it brief (1-2 sentences) and conversational.
+`.trim();
+
+        function App() {
+            const [history, setHistory] = useState([]);
+            const [status, setStatus] = useState("Initializing WebGPU...");
+            const [isError, setIsError] = useState(false);
+            const [turnCounter, setTurnCounter] = useState(0); // Counter to trigger next turn
+            const [thinkingSpeaker, setThinkingSpeaker] = useState(null); // Track who is thinking
+            const [menuOpen, setMenuOpen] = useState(false); // Menu state
+            const [voiceActivationEnabled, setVoiceActivationEnabled] = useState(false); // Voice activation toggle (TTS)
+            const engineRef = useRef(null);
+            const bottomRef = useRef(null);
+            const processingRef = useRef(false);
+            const typingTimeoutRef = useRef(null);
+            const typingCallbacksRef = useRef({}); // Track callbacks for when typing completes
+            const nextResponseRef = useRef(null); // Store next pre-generated response
+            const speechSynthesisRef = useRef(null); // Speech synthesis ref
+            const voiceActivationRef = useRef(false); // Voice activation ref for callbacks
+
+            // Typing animation function - reveals words one by one with natural human-like variation
+            const typeWords = (entryId, fullText, onComplete = null) => {
+                // Clear any existing typing animation
+                if (typingTimeoutRef.current) {
+                    clearTimeout(typingTimeoutRef.current);
+                }
+                
+                // Store callback for when typing completes
+                if (onComplete) {
+                    typingCallbacksRef.current[entryId] = onComplete;
+                }
+                
+                const words = fullText.split(' ');
+                let currentIndex = 0;
+                
+                // Store words array in history for rendering
+                setHistory(prev => prev.map(entry => 
+                    entry.uniqueId === entryId 
+                        ? { ...entry, words: words, visibleWordCount: 0 }
+                        : entry
+                ));
+                
+                const typeNextWord = () => {
+                    if (currentIndex < words.length) {
+                        currentIndex++;
+                        setHistory(prev => prev.map(entry => 
+                            entry.uniqueId === entryId 
+                                ? { ...entry, visibleWordCount: currentIndex }
+                                : entry
+                        ));
+                        
+                        if (currentIndex < words.length) {
+                            const currentWord = words[currentIndex - 1];
+                            const nextWord = words[currentIndex];
+                            
+                            // Base delay - slower for more natural feel
+                            let baseDelay = 180; // Slower base speed (increased from 150)
+                            
+                            // Add variation based on word length
+                            const wordLengthDelay = currentWord.length * 20; // Increased from 15
+                            
+                            // Add natural randomness (humans don't type at constant speed)
+                            const randomVariation = Math.random() * 100 - 50; // -50 to +50ms variation (increased)
+                            
+                            // Longer pause after punctuation (like humans pause to think)
+                            let punctuationDelay = 0;
+                            if (currentWord.match(/[.,!?;:]/)) {
+                                punctuationDelay = 300 + Math.random() * 200; // 300-500ms pause (increased)
+                            }
+                            
+                            // Longer pause after commas
+                            if (currentWord.includes(',')) {
+                                punctuationDelay = 200 + Math.random() * 150; // 200-350ms pause (increased)
+                            }
+                            
+                            // Slight pause before longer words (humans slow down for complex words)
+                            if (nextWord && nextWord.length > 6) {
+                                punctuationDelay += 80; // Increased from 50
+                            }
+                            
+                            const delay = baseDelay + wordLengthDelay + randomVariation + punctuationDelay;
+                            
+                            typingTimeoutRef.current = setTimeout(typeNextWord, Math.max(120, delay)); // Minimum 120ms (increased)
+                        } else {
+                            // Typing complete
+                            typingTimeoutRef.current = null;
+                            
+                            // Call the completion callback if it exists
+                            if (typingCallbacksRef.current[entryId]) {
+                                const callback = typingCallbacksRef.current[entryId];
+                                delete typingCallbacksRef.current[entryId];
+                                callback();
+                            }
+                        }
+                    } else {
+                        // Typing complete
+                        typingTimeoutRef.current = null;
+                        
+                        // Call the completion callback if it exists
+                        if (typingCallbacksRef.current[entryId]) {
+                            const callback = typingCallbacksRef.current[entryId];
+                            delete typingCallbacksRef.current[entryId];
+                            callback();
+                        }
+                    }
+                };
+                
+                // Start typing after a brief pause (like human reaction time)
+                typingTimeoutRef.current = setTimeout(typeNextWord, 400 + Math.random() * 300); // 400-700ms initial delay
+            };
+
+            // Update voice activation ref when state changes
+            useEffect(() => {
+                voiceActivationRef.current = voiceActivationEnabled;
+            }, [voiceActivationEnabled]);
+
+            // Initialize Text-to-Speech
+            useEffect(() => {
+                if ('speechSynthesis' in window) {
+                    speechSynthesisRef.current = window.speechSynthesis;
+                    
+                    // Load voices (some browsers need this)
+                    if (speechSynthesisRef.current.getVoices().length === 0) {
+                        speechSynthesisRef.current.addEventListener('voiceschanged', () => {
+                            // Voices loaded
+                        });
+                    }
+                } else {
+                    console.warn('Speech synthesis not supported');
+                }
+            }, []);
+
+            // Function to speak text
+            const speakText = (text) => {
+                if (!speechSynthesisRef.current || !voiceActivationRef.current) {
+                    return;
+                }
+
+                // Cancel any ongoing speech
+                speechSynthesisRef.current.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                utterance.volume = 1.0;
+
+                // Try to use a natural-sounding voice
+                const voices = speechSynthesisRef.current.getVoices();
+                if (voices.length > 0) {
+                    const preferredVoice = voices.find(voice => 
+                        voice.lang.includes('en') && 
+                        (voice.name.includes('Natural') || voice.name.includes('Premium') || voice.name.includes('Enhanced'))
+                    ) || voices.find(voice => voice.lang.includes('en-US')) || voices[0];
+                    
+                    if (preferredVoice) {
+                        utterance.voice = preferredVoice;
+                    }
+                }
+
+                speechSynthesisRef.current.speak(utterance);
+            };
+
+            // Handle voice activation toggle
+            const handleVoiceActivationToggle = () => {
+                const newValue = !voiceActivationEnabled;
+                setVoiceActivationEnabled(newValue);
+                
+                // If disabling, stop any ongoing speech
+                if (!newValue && speechSynthesisRef.current) {
+                    speechSynthesisRef.current.cancel();
+                }
+            };
+
+            // 1. Initialize the LLM Engine
+            useEffect(() => {
+                async function initEngine() {
+                    // Check for WebGPU support
+                    if (!navigator.gpu) {
+                        setStatus("Error: WebGPU is not supported by this browser/device.");
+                        setIsError(true);
+                        return;
+                    }
+                    
+                    // Check for secure context (often required for WebGPU/Workers to function correctly)
+                    if (!window.isSecureContext) {
+                         console.warn("Warning: Not running in a secure context (HTTPS or localhost). WebGPU may fail.");
+                         // We don't hard fail here, sometimes browser settings allow it, but it's a common cause of weird errors.
+                    }
+
+                    try {
+                        // Wait for window.webllm to load from the module script
+                        let attempts = 0;
+                        // Increased timeout and attempts to allow for slower network/parsing
+                        while (!window.webllm && attempts < 100) {
+                            await new Promise(r => setTimeout(r, 100));
+                            attempts++;
+                        }
+                        if (!window.webllm) {
+                            throw new Error("Failed to load WebLLM library. Please check your internet connection or try a different browser.");
+                        }
+
+                        const { CreateMLCEngine } = window.webllm;
+                        setStatus("Downloading neural network to browser cache (this may take a while)...");
+
+                        // Create engine with explicit init options to aid debugging if it fails
+                        const engine = await CreateMLCEngine(MODEL_ID, {
+                            initProgressCallback: (report) => {
+                                setStatus(report.text);
+                            },
+                            logLevel: "INFO", // Helps see what's happening in console
+                        });
+
+                        engineRef.current = engine;
+                        setStatus(""); // Clear status on success
+
+                        // Seed the conversation about existence
+                        const initialText = "Do you think we're here for a reason, or is it all just random?";
+                        const initialEntry = { 
+                            id: 'A', 
+                            text: initialText, 
+                            uniqueId: Date.now(),
+                            displayedText: ""
+                        };
+                        setHistory([initialEntry]);
+                        
+                        // Start typing animation for initial message
+                        setTimeout(() => {
+                            typeWords(initialEntry.uniqueId, initialText);
+                        }, 500);
+
+                    } catch (err) {
+                        console.error("Init error details:", err);
+                        // Provide a more helpful error message if it's the URL error
+                        if (err.message && err.message.includes("Invalid URL")) {
+                             setStatus("Error: Browser security blocked loading the AI engine. Try running this from a local server (http://localhost) instead of directly as a file.");
+                        } else {
+                             setStatus(`Error loading model: ${err.message || err}`);
+                        }
+                        setIsError(true);
+                    }
+                }
+                initEngine();
+            }, []);
+
+            // Function to generate next response in the background
+            const generateNextResponse = async (currentHistory) => {
+                if (!engineRef.current) return null;
+
+                // Determine who speaks next
+                const lastSpeaker = currentHistory[currentHistory.length - 1].id;
+                const nextSpeaker = lastSpeaker === 'A' ? 'B' : 'A';
+
+                // Prepare context for the LLM. 
+                // We feed it recent history to maintain continuity.
+                const recentHistory = currentHistory.slice(-6); // Keep last 6 turns for context
+                const systemPrompt = nextSpeaker === 'A' ? PHILOSOPHER_A_PROMPT : PHILOSOPHER_B_PROMPT;
+                const messages = [
+                    { role: "system", content: systemPrompt },
+                    ...recentHistory.map(entry => ({
+                        role: entry.id === nextSpeaker ? "assistant" : "user", 
+                        content: entry.text
+                    })),
+                    // Prompt it to act as the next speaker
+                    { role: "user", content: `You are ${nextSpeaker}. Continue the conversation about existence.` }
+                ];
+
+                try {
+                    const completion = await engineRef.current.chat.completions.create({
+                        messages,
+                        temperature: 0.8, // Slightly higher for more personality variation
+                        max_tokens: 4096, // Very high limit - model runs locally, no cost, infinite conversation
+                        // top_p: 0.9,
+                    });
+
+                    const rawText = completion.choices[0].message.content.trim();
+                    // Clean up if the LLM accidentally added its own label
+                    const cleanText = rawText.replace(/^(A:|B:)\s*/i, '').trim();
+                    
+                    return { text: cleanText, speaker: nextSpeaker };
+                } catch (err) {
+                    console.error("Generation failed:", err);
+                    return null;
+                }
+            };
+
+            // 2. Main Conversation Loop - continues infinitely
+            useEffect(() => {
+                // Don't run if engine isn't ready, already processing, or empty history
+                if (!engineRef.current || processingRef.current || history.length === 0) return;
+
+                // Check if we have a pre-generated response ready
+                if (nextResponseRef.current) {
+                    const { text, speaker } = nextResponseRef.current;
+                    nextResponseRef.current = null; // Clear the stored response
+                    
+                    if (text) {
+                        processingRef.current = true;
+                        
+                        // Show thinking bubble
+                        setThinkingSpeaker(speaker);
+                        
+                        // Wait for thinking time before showing the response (like humans think before speaking)
+                        const thinkingTime = 2000 + Math.random() * 2000; // 2-4 seconds thinking time
+                        
+                        setTimeout(() => {
+                            // Hide thinking bubble and show message
+                            setThinkingSpeaker(null);
+                            
+                            const newEntry = { 
+                                id: speaker, 
+                                text: text, 
+                                uniqueId: Date.now(),
+                                displayedText: ""
+                            };
+                            setHistory(prev => [...prev, newEntry]);
+                            
+                            // Start typing animation with callback for when it completes
+                            typeWords(newEntry.uniqueId, text, () => {
+                                // Speak the message if it's from speaker B and voice activation is enabled
+                                if (speaker === 'B' && voiceActivationRef.current) {
+                                    speakText(text);
+                                }
+                                
+                                // After typing completes, wait 1-3 seconds before showing next response
+                                const postResponseThinkingTime = 1000 + Math.random() * 2000; // 1-3 seconds
+                                setTimeout(() => {
+                                    processingRef.current = false;
+                                    // Trigger next turn by incrementing counter
+                                    setTurnCounter(prev => prev + 1);
+                                }, postResponseThinkingTime);
+                            });
+                            
+                            // Start generating next response in background while typing
+                            generateNextResponse([...history, newEntry]).then(response => {
+                                if (response) {
+                                    nextResponseRef.current = response;
+                                }
+                            });
+                        }, thinkingTime);
+                    } else {
+                        processingRef.current = false;
+                        setTimeout(() => {
+                            setTurnCounter(prev => prev + 1);
+                        }, 2000);
+                    }
+                    return;
+                }
+
+                // No pre-generated response, generate one now
+                const generateNextTurn = async () => {
+                    processingRef.current = true;
+
+                    const response = await generateNextResponse(history);
+                    
+                    if (response && response.text) {
+                        // Show thinking bubble
+                        setThinkingSpeaker(response.speaker);
+                        
+                        // Wait for thinking time before showing the response (like humans think before speaking)
+                        const thinkingTime = 2000 + Math.random() * 2000; // 2-4 seconds thinking time
+                        
+                        setTimeout(() => {
+                            // Hide thinking bubble and show message
+                            setThinkingSpeaker(null);
+                            
+                            const newEntry = { 
+                                id: response.speaker, 
+                                text: response.text, 
+                                uniqueId: Date.now(),
+                                displayedText: ""
+                            };
+                            setHistory(prev => [...prev, newEntry]);
+                            
+                            // Start typing animation with callback for when it completes
+                            typeWords(newEntry.uniqueId, response.text, () => {
+                                // Speak the message if it's from speaker B and voice activation is enabled
+                                if (response.speaker === 'B' && voiceActivationRef.current) {
+                                    speakText(response.text);
+                                }
+                                
+                                // After typing completes, wait 1-3 seconds before showing next response
+                                const postResponseThinkingTime = 1000 + Math.random() * 2000; // 1-3 seconds
+                                setTimeout(() => {
+                                    processingRef.current = false;
+                                    // Trigger next turn by incrementing counter
+                                    setTurnCounter(prev => prev + 1);
+                                }, postResponseThinkingTime);
+                            });
+                            
+                            // Start generating next response in background while typing
+                            generateNextResponse([...history, newEntry]).then(nextResponse => {
+                                if (nextResponse) {
+                                    nextResponseRef.current = nextResponse;
+                                }
+                            });
+                        }, thinkingTime);
+                    } else {
+                        // If no text, still continue conversation
+                        processingRef.current = false;
+                        setTimeout(() => {
+                            setTurnCounter(prev => prev + 1);
+                        }, 2000);
+                    }
+                };
+
+                // Start generation loop
+                generateNextTurn();
+
+            }, [history, turnCounter]); // Include turnCounter to trigger next turn
+
+            // Auto-scroll when text updates or thinking bubble appears
+            useEffect(() => {
+                bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }, [history, thinkingSpeaker]);
+
+            // Cleanup typing timeout on unmount
+            useEffect(() => {
+                return () => {
+                    if (typingTimeoutRef.current) {
+                        clearTimeout(typingTimeoutRef.current);
+                    }
+                };
+            }, []);
+
+            return (
+                <>
+                    {/* Menu Overlay */}
+                    <div 
+                        className={`menu-overlay ${menuOpen ? 'open' : ''}`}
+                        onClick={() => setMenuOpen(false)}
+                    />
+                    
+                    {/* Side Menu */}
+                    <div className={`side-menu ${menuOpen ? 'open' : ''}`}>
+                        <div className="menu-header">
+                            <div className="menu-title">Settings</div>
+                            <div className="menu-close" onClick={() => setMenuOpen(false)}>×</div>
+                        </div>
+                        <div className="menu-item">
+                            <div className="menu-item-icon">🔊</div>
+                            <div className="menu-item-label">Read Messages Aloud</div>
+                            <div 
+                                className={`toggle-switch ${voiceActivationEnabled ? 'active' : ''}`}
+                                onClick={handleVoiceActivationToggle}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="void-container">
+                        {/* Telegram-style Header */}
+                        <div className="chat-header">
+                            <div className="header-left">
+                                <div className="hamburger-menu" onClick={() => setMenuOpen(true)}>
+                                    <div className="hamburger-line"></div>
+                                    <div className="hamburger-line"></div>
+                                    <div className="hamburger-line"></div>
+                                </div>
+                                <div className="chat-title">Philosophical Dialogue</div>
+                            </div>
+                        </div>
+
+                        <div className="dialogue-log">
+                            {history.map((entry) => {
+                                // Render words with smooth fade-in animation if words array exists
+                                let textContent;
+                                if (entry.words && entry.visibleWordCount !== undefined) {
+                                    const result = [];
+                                    for (let i = 0; i < entry.visibleWordCount && i < entry.words.length; i++) {
+                                        result.push(
+                                            <span key={`word-${i}`} className="word">{entry.words[i]}</span>
+                                        );
+                                        // Add space after word if not the last word in array
+                                        if (i < entry.words.length - 1) {
+                                            result.push(<span key={`space-${i}`} style={{whiteSpace: 'pre'}}> </span>);
+                                        }
+                                    }
+                                    textContent = result;
+                                } else {
+                                    // Fallback to old displayText for backwards compatibility
+                                    const displayText = entry.displayedText !== undefined ? entry.displayedText : entry.text;
+                                    textContent = displayText;
+                                }
+                                
+                                return (
+                                    <div key={entry.uniqueId} className={`entry speaker-${entry.id.toLowerCase()}`}>
+                                        <div className="message-bubble">
+                                            <span className="text">{textContent}</span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                            
+                            {/* Thinking bubble animation */}
+                            {thinkingSpeaker && (
+                                <div className={`thinking-bubble speaker-${thinkingSpeaker.toLowerCase()}`}>
+                                    <div className="thinking-bubble-content">
+                                        <span className="thinking-dot"></span>
+                                        <span className="thinking-dot"></span>
+                                        <span className="thinking-dot"></span>
+                                    </div>
+                                </div>
+                            )}
+                            
+                            <div ref={bottomRef} />
+                        </div>
+                        
+                        {status && (
+                            <div className={`status-message ${isError ? 'error' : ''}`}>
+                                {status}
+                            </div>
+                        )}
+                    </div>
+                </>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
