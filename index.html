@@ -10,10 +10,32 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
-    <!-- 2. Minimal CSS -->
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'telegram-bg': '#e5ddd5',
+                        'telegram-blue': '#3390ec',
+                        'telegram-green': '#dcf8c6',
+                        'telegram-gray': '#707579',
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'telegram-pattern': "url(\"data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='telegram-pattern' x='0' y='0' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='50' cy='50' r='1' fill='%23ffffff' opacity='0.1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23telegram-pattern)'/%3E%3C/svg%3E\")",
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- Minimal CSS for animations and scrollbar that Tailwind doesn't support -->
     <style>
-        /* Global Reset */
-        *, *::before, *::after {
+        * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
@@ -21,237 +43,11 @@
 
         html, body {
             height: 100%;
-            background: #e5ddd5;
-            background-image: 
-                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            color: #1a1a1a;
-            line-height: 1.6;
             overflow: hidden;
         }
 
         #root {
             height: 100%;
-        }
-
-        .void-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            max-width: 680px;
-            margin: 0 auto;
-            padding: 0;
-            background-color: #ffffff;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
-
-        /* Telegram-style Header */
-        .chat-header {
-            background-color: #ffffff;
-            border-bottom: 1px solid #e4e4e4;
-            padding: 8px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 54px;
-            position: relative;
-            z-index: 100;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .hamburger-menu {
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            padding: 4px;
-        }
-
-        .hamburger-line {
-            width: 20px;
-            height: 2px;
-            background-color: #707579;
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
-
-        .hamburger-menu:hover .hamburger-line {
-            background-color: #000000;
-        }
-
-        .chat-title {
-            font-size: 16px;
-            font-weight: 500;
-            color: #000000;
-        }
-
-        /* Side Menu (Telegram-style) */
-        .side-menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 280px;
-            height: 100%;
-            background-color: #ffffff;
-            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            z-index: 1000;
-            overflow-y: auto;
-        }
-
-        .side-menu.open {
-            transform: translateX(0);
-        }
-
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.3);
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-            z-index: 999;
-        }
-
-        .menu-overlay.open {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .menu-header {
-            padding: 16px;
-            border-bottom: 1px solid #e4e4e4;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .menu-title {
-            font-size: 18px;
-            font-weight: 500;
-            color: #000000;
-        }
-
-        .menu-close {
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #707579;
-            font-size: 24px;
-            line-height: 1;
-        }
-
-        .menu-close:hover {
-            color: #000000;
-        }
-
-        .menu-item {
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            border-bottom: 1px solid #f0f0f0;
-            transition: background-color 0.2s ease;
-        }
-
-        .menu-item:hover {
-            background-color: #f5f5f5;
-        }
-
-        .menu-item-icon {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #707579;
-        }
-
-        .menu-item-label {
-            flex: 1;
-            font-size: 15px;
-            color: #000000;
-        }
-
-        .toggle-switch {
-            width: 44px;
-            height: 24px;
-            background-color: #ccc;
-            border-radius: 12px;
-            position: relative;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .toggle-switch.active {
-            background-color: #3390ec;
-        }
-
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: #ffffff;
-            top: 2px;
-            left: 2px;
-            transition: transform 0.3s ease;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        }
-
-        .toggle-switch.active::after {
-            transform: translateX(20px);
-        }
-
-        .dialogue-log {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 20px 16px;
-            background-color: #e5ddd5;
-            background-image: 
-                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%);
-            scrollbar-width: thin;
-            scrollbar-color: rgba(0,0,0,0.2) transparent;
-        }
-        .dialogue-log::-webkit-scrollbar {
-            width: 6px;
-        }
-        .dialogue-log::-webkit-scrollbar-thumb {
-            background-color: rgba(0,0,0,0.2);
-            border-radius: 3px;
-        }
-
-        .entry {
-            margin-bottom: 12px;
-            display: flex;
-            align-items: flex-end;
-            animation: messageSlideIn 0.3s ease-out;
-        }
-
-        .entry.speaker-a {
-            justify-content: flex-start;
-        }
-
-        .entry.speaker-b {
-            justify-content: flex-end;
         }
 
         @keyframes messageSlideIn {
@@ -265,60 +61,6 @@
             }
         }
 
-        .message-bubble {
-            max-width: 75%;
-            padding: 12px 16px;
-            border-radius: 18px;
-            position: relative;
-            word-wrap: break-word;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            text-indent: 0;
-            overflow-wrap: break-word;
-            font-kerning: none;
-            text-rendering: optimizeLegibility;
-        }
-
-        .entry.speaker-a .message-bubble {
-            background-color: #ffffff;
-            color: #1a1a1a;
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-
-        .entry.speaker-b .message-bubble {
-            background-color: #dcf8c6;
-            color: #1a1a1a;
-            border-bottom-right-radius: 4px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-
-        .text {
-            font-size: 15px;
-            line-height: 1.4;
-            text-align: left;
-            display: block;
-            margin: 0;
-            padding: 0;
-            text-indent: 0;
-            word-spacing: 0;
-            letter-spacing: 0;
-        }
-        
-        .text > *:first-child {
-            margin-left: 0;
-            padding-left: 0;
-        }
-
-        /* Smooth word fade-in animation like ChatGPT/Gemini */
-        .word {
-            display: inline-block;
-            vertical-align: baseline;
-            margin: 0;
-            padding: 0;
-            opacity: 0;
-            animation: wordFadeIn 0.4s ease-out forwards;
-        }
-
         @keyframes wordFadeIn {
             from {
                 opacity: 0;
@@ -330,46 +72,23 @@
             }
         }
 
-        /* Thinking bubble animation */
-        .thinking-bubble {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-            animation: messageSlideIn 0.3s ease-out;
+        @keyframes thinkingPulse {
+            0%, 60%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            30% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
         }
 
-        .thinking-bubble.speaker-a {
-            justify-content: flex-start;
-        }
-
-        .thinking-bubble.speaker-b {
-            justify-content: flex-end;
-        }
-
-        .thinking-bubble-content {
-            background-color: #ffffff;
-            border-radius: 18px;
-            padding: 12px 16px;
-            display: flex;
-            gap: 4px;
-            align-items: center;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-
-        .thinking-bubble.speaker-b .thinking-bubble-content {
-            background-color: #dcf8c6;
+        .word {
+            animation: wordFadeIn 0.4s ease-out forwards;
         }
 
         .thinking-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: #999;
             animation: thinkingPulse 1.4s ease-in-out infinite;
-        }
-
-        .thinking-bubble.speaker-b .thinking-dot {
-            background-color: #999;
         }
 
         .thinking-dot:nth-child(1) {
@@ -384,37 +103,27 @@
             animation-delay: 0.4s;
         }
 
-        @keyframes thinkingPulse {
-            0%, 60%, 100% {
-                transform: scale(1);
-                opacity: 0.5;
-            }
-            30% {
-                transform: scale(1.2);
-                opacity: 1;
-            }
+        /* Custom scrollbar styling */
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
         }
 
-        /* Loading state styling */
-        .status-message {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.75rem;
-            opacity: 0.5;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            text-align: center;
-            width: 100%;
-            max-width: 680px;
-            z-index: 1000;
-        }
-        .error {
-            color: #d32f2f;
-            opacity: 1;
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.15);
+            border-radius: 3px;
         }
 
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(0, 0, 0, 0.25);
+        }
+
+        .scrollbar-thumb-black\/15::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.15);
+        }
+
+        .scrollbar-track-transparent::-webkit-scrollbar-track {
+            background: transparent;
+        }
     </style>
 
     <!-- 3. Dependencies -->
@@ -443,22 +152,285 @@
         // Llama-3.2-1B is chosen for its small size and decent instruction following.
         const MODEL_ID = "Llama-3.2-1B-Instruct-q4f16_1-MLC";
         
-        // System prompts for two different philosopher personalities - more casual and human
-        const PHILOSOPHER_A_PROMPT = `
+        // Default system prompts for two different philosopher personalities - more casual and human
+        const DEFAULT_PHILOSOPHER_A_PROMPT = `
 You are a casual, optimistic person named A talking about existence.
 You're curious and hopeful. You think life has meaning we create ourselves.
 Talk like a normal person having a conversation - use casual language, contractions, and natural speech.
 Keep it brief (1-2 sentences) and conversational.
 `.trim();
 
-        const PHILOSOPHER_B_PROMPT = `
+        const DEFAULT_PHILOSOPHER_B_PROMPT = `
 You are a casual, skeptical person named B talking about existence.
 You're a bit cynical and question if anything really matters.
 Talk like a normal person having a conversation - use casual language, contractions, and natural speech.
 Keep it brief (1-2 sentences) and conversational.
 `.trim();
 
+        // ConfigModal Component
+        function ConfigModal({ onConfigSubmit, onClose }) {
+            const [profileName, setProfileName] = useState("");
+            const [characterAName, setCharacterAName] = useState("A");
+            const [characterAPrompt, setCharacterAPrompt] = useState(DEFAULT_PHILOSOPHER_A_PROMPT);
+            const [characterBName, setCharacterBName] = useState("B");
+            const [characterBPrompt, setCharacterBPrompt] = useState(DEFAULT_PHILOSOPHER_B_PROMPT);
+            const [timeMode, setTimeMode] = useState("infinite"); // "infinite" or "custom"
+            const [customMinutes, setCustomMinutes] = useState(10);
+            const [initialMessage, setInitialMessage] = useState("Do you think we're here for a reason, or is it all just random?");
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (!profileName.trim()) {
+                    alert("Please enter a profile name");
+                    return;
+                }
+                if (!characterAName.trim() || !characterBName.trim()) {
+                    alert("Please enter names for both characters");
+                    return;
+                }
+                if (timeMode === "custom" && (customMinutes < 1 || customMinutes > 120)) {
+                    alert("Please enter a valid duration between 1 and 120 minutes");
+                    return;
+                }
+
+                const config = {
+                    profile: {
+                        name: profileName.trim()
+                    },
+                    characters: {
+                        A: {
+                            name: characterAName.trim(),
+                            prompt: characterAPrompt.trim() || DEFAULT_PHILOSOPHER_A_PROMPT
+                        },
+                        B: {
+                            name: characterBName.trim(),
+                            prompt: characterBPrompt.trim() || DEFAULT_PHILOSOPHER_B_PROMPT
+                        }
+                    },
+                    time: {
+                        mode: timeMode,
+                        duration: timeMode === "custom" ? customMinutes * 60 * 1000 : null // Convert to milliseconds
+                    },
+                    initialMessage: initialMessage.trim() || "Do you think we're here for a reason, or is it all just random?"
+                };
+
+                onConfigSubmit(config);
+            };
+
+            return (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[2000]" onClick={onClose}>
+                    <div className="bg-white rounded-xl p-6 max-w-[700px] w-[90%] max-h-[90vh] overflow-y-auto shadow-[0_4px_20px_rgba(0,0,0,0.3)]" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center justify-between mb-4">
+                            <div>
+                                <div className="text-[22px] font-medium text-black mb-1">Configuration</div>
+                                <div className="text-sm text-telegram-gray">Set up your conversation</div>
+                            </div>
+                            <button 
+                                className="w-8 h-8 cursor-pointer flex items-center justify-center text-telegram-gray text-2xl leading-none hover:text-black transition-colors" 
+                                onClick={onClose}
+                            >
+                                ×
+                            </button>
+                        </div>
+                        <form onSubmit={handleSubmit}>
+                            {/* Profile Creation */}
+                            <div className="bg-gray-50 rounded-xl p-5 mb-4">
+                                <div className="text-lg font-medium text-black mb-4">Profile Creation</div>
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-[#1a1a1a] mb-2">Profile Name</label>
+                                    <input
+                                        type="text"
+                                        className="w-full py-2.5 px-3 border border-gray-200 rounded-lg text-[15px] font-sans text-[#1a1a1a] bg-white transition-colors focus:outline-none focus:border-telegram-blue"
+                                        value={profileName}
+                                        onChange={(e) => setProfileName(e.target.value)}
+                                        placeholder="Enter your profile name"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Character Creation */}
+                            <div className="bg-gray-50 rounded-xl p-5 mb-4">
+                                <div className="text-lg font-medium text-black mb-4">Character Creation</div>
+                                
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-[#1a1a1a] mb-2">Character A Name</label>
+                                    <input
+                                        type="text"
+                                        className="w-full py-2.5 px-3 border border-gray-200 rounded-lg text-[15px] font-sans text-[#1a1a1a] bg-white transition-colors focus:outline-none focus:border-telegram-blue"
+                                        value={characterAName}
+                                        onChange={(e) => setCharacterAName(e.target.value)}
+                                        placeholder="Character A name"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-[#1a1a1a] mb-2">Character A Personality & Prompt</label>
+                                    <textarea
+                                        className="w-full py-2.5 px-3 border border-gray-200 rounded-lg text-[15px] font-sans text-[#1a1a1a] bg-white resize-y min-h-[80px] transition-colors focus:outline-none focus:border-telegram-blue"
+                                        value={characterAPrompt}
+                                        onChange={(e) => setCharacterAPrompt(e.target.value)}
+                                        placeholder="Describe character A's personality and how they should talk..."
+                                    />
+                                </div>
+
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-[#1a1a1a] mb-2">Character B Name</label>
+                                    <input
+                                        type="text"
+                                        className="w-full py-2.5 px-3 border border-gray-200 rounded-lg text-[15px] font-sans text-[#1a1a1a] bg-white transition-colors focus:outline-none focus:border-telegram-blue"
+                                        value={characterBName}
+                                        onChange={(e) => setCharacterBName(e.target.value)}
+                                        placeholder="Character B name"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-[#1a1a1a] mb-2">Character B Personality & Prompt</label>
+                                    <textarea
+                                        className="w-full py-2.5 px-3 border border-gray-200 rounded-lg text-[15px] font-sans text-[#1a1a1a] bg-white resize-y min-h-[80px] transition-colors focus:outline-none focus:border-telegram-blue"
+                                        value={characterBPrompt}
+                                        onChange={(e) => setCharacterBPrompt(e.target.value)}
+                                        placeholder="Describe character B's personality and how they should talk..."
+                                    />
+                                </div>
+
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-[#1a1a1a] mb-2">Initial Message</label>
+                                    <input
+                                        type="text"
+                                        className="w-full py-2.5 px-3 border border-gray-200 rounded-lg text-[15px] font-sans text-[#1a1a1a] bg-white transition-colors focus:outline-none focus:border-telegram-blue"
+                                        value={initialMessage}
+                                        onChange={(e) => setInitialMessage(e.target.value)}
+                                        placeholder="First message to start the conversation"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Time Settings */}
+                            <div className="bg-gray-50 rounded-xl p-5 mb-4">
+                                <div className="text-lg font-medium text-black mb-4">Time Settings</div>
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-[#1a1a1a] mb-2">Conversation Duration</label>
+                                    <div className="flex gap-4 mt-2">
+                                        <div className="flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                id="infinite"
+                                                name="timeMode"
+                                                className="w-[18px] h-[18px] cursor-pointer"
+                                                value="infinite"
+                                                checked={timeMode === "infinite"}
+                                                onChange={(e) => setTimeMode(e.target.value)}
+                                            />
+                                            <label htmlFor="infinite" className="text-[15px] text-[#1a1a1a] cursor-pointer">Infinite</label>
+                                        </div>
+                                        <div className="flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                id="custom"
+                                                name="timeMode"
+                                                className="w-[18px] h-[18px] cursor-pointer"
+                                                value="custom"
+                                                checked={timeMode === "custom"}
+                                                onChange={(e) => setTimeMode(e.target.value)}
+                                            />
+                                            <label htmlFor="custom" className="text-[15px] text-[#1a1a1a] cursor-pointer">Custom</label>
+                                        </div>
+                                    </div>
+                                    {timeMode === "custom" && (
+                                        <div className="flex items-center gap-3 mt-2">
+                                            <input
+                                                type="number"
+                                                className="w-[100px] py-2.5 px-3 border border-gray-200 rounded-lg text-[15px] font-sans text-[#1a1a1a] bg-white focus:outline-none focus:border-telegram-blue"
+                                                value={customMinutes}
+                                                onChange={(e) => setCustomMinutes(parseInt(e.target.value) || 10)}
+                                                min="1"
+                                                max="120"
+                                                required
+                                            />
+                                            <span className="text-sm text-telegram-gray">minutes</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="flex gap-3">
+                                <button 
+                                    type="button"
+                                    className="flex-1 py-3 bg-gray-200 text-black border-none rounded-lg text-[15px] font-medium font-sans cursor-pointer transition-colors hover:bg-gray-300" 
+                                    onClick={onClose}
+                                >
+                                    Cancel
+                                </button>
+                                <button type="submit" className="flex-1 py-3 bg-telegram-blue text-white border-none rounded-lg text-[15px] font-medium font-sans cursor-pointer transition-colors hover:bg-[#2a7fd4] active:bg-[#1f6bb8] disabled:bg-gray-300 disabled:cursor-not-allowed">
+                                    Start Conversation
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            );
+        }
+
+        // SummaryModal Component
+        function SummaryModal({ summary, onClose }) {
+            return (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[2000]" onClick={onClose}>
+                    <div className="bg-white rounded-xl p-6 max-w-[600px] w-[90%] max-h-[80vh] overflow-y-auto shadow-[0_4px_20px_rgba(0,0,0,0.3)]" onClick={(e) => e.stopPropagation()}>
+                        <div className="text-[22px] font-medium text-black mb-4">Conversation Summary</div>
+                        <div className="mb-5">
+                            <div className="text-base font-medium text-[#1a1a1a] mb-2">Key Learning Points</div>
+                            <ul className="list-none p-0 m-0">
+                                {summary.learningPoints && summary.learningPoints.length > 0 ? (
+                                    summary.learningPoints.map((point, index) => (
+                                        <li key={index} className="py-2 pl-5 relative text-sm text-[#1a1a1a] leading-relaxed before:content-['•'] before:absolute before:left-0 before:text-telegram-blue before:font-bold">{point}</li>
+                                    ))
+                                ) : (
+                                    <li className="py-2 pl-5 relative text-sm text-[#1a1a1a] leading-relaxed before:content-['•'] before:absolute before:left-0 before:text-telegram-blue before:font-bold">No specific learning points extracted.</li>
+                                )}
+                            </ul>
+                        </div>
+                        <button className="w-full py-3 bg-telegram-blue text-white border-none rounded-lg text-[15px] font-medium font-sans cursor-pointer mt-4 hover:bg-[#2a7fd4]" onClick={onClose}>
+                            Close
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // ConfirmationModal Component
+        function ConfirmationModal({ message, onConfirm, onCancel }) {
+            return (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[2000]" onClick={onCancel}>
+                    <div className="bg-white rounded-xl p-6 max-w-[500px] w-[90%] shadow-[0_4px_20px_rgba(0,0,0,0.3)]" onClick={(e) => e.stopPropagation()}>
+                        <div className="text-[22px] font-medium text-black mb-4">Confirm</div>
+                        <div className="text-[15px] text-[#1a1a1a] mb-6 leading-relaxed">
+                            {message}
+                        </div>
+                        <div className="flex gap-3">
+                            <button 
+                                className="flex-1 py-3 bg-gray-200 text-black border-none rounded-lg text-[15px] font-medium font-sans cursor-pointer hover:bg-gray-300 transition-colors" 
+                                onClick={onCancel}
+                            >
+                                Cancel
+                            </button>
+                            <button 
+                                className="flex-1 py-3 bg-red-500 text-white border-none rounded-lg text-[15px] font-medium font-sans cursor-pointer hover:bg-red-600 transition-colors" 
+                                onClick={onConfirm}
+                            >
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
         function App() {
+            const [config, setConfig] = useState(null); // Store config when submitted
             const [history, setHistory] = useState([]);
             const [status, setStatus] = useState("Initializing WebGPU...");
             const [isError, setIsError] = useState(false);
@@ -466,6 +438,16 @@ Keep it brief (1-2 sentences) and conversational.
             const [thinkingSpeaker, setThinkingSpeaker] = useState(null); // Track who is thinking
             const [menuOpen, setMenuOpen] = useState(false); // Menu state
             const [voiceActivationEnabled, setVoiceActivationEnabled] = useState(false); // Voice activation toggle (TTS)
+            const [showSummary, setShowSummary] = useState(false); // Show summary modal
+            const [summary, setSummary] = useState(null); // Store summary data
+            const [timeRemaining, setTimeRemaining] = useState(null); // Time remaining for custom mode
+            const [isPaused, setIsPaused] = useState(false); // Pause state
+            const [conversations, setConversations] = useState([]); // List of all conversations
+            const [activeConversationId, setActiveConversationId] = useState(null); // Currently active conversation
+            const [chatListOpen, setChatListOpen] = useState(false); // Chat list open state (mobile)
+            const [searchQuery, setSearchQuery] = useState(""); // Search query for chat list
+            const [confirmationModal, setConfirmationModal] = useState(null); // Confirmation modal state: { message, onConfirm }
+            const [showConfigModal, setShowConfigModal] = useState(false); // Show config modal
             const engineRef = useRef(null);
             const bottomRef = useRef(null);
             const processingRef = useRef(false);
@@ -474,6 +456,11 @@ Keep it brief (1-2 sentences) and conversational.
             const nextResponseRef = useRef(null); // Store next pre-generated response
             const speechSynthesisRef = useRef(null); // Speech synthesis ref
             const voiceActivationRef = useRef(false); // Voice activation ref for callbacks
+            const conversationStartTimeRef = useRef(null); // Track when conversation started
+            const timeIntervalRef = useRef(null); // Interval for time tracking
+            const historyRef = useRef([]); // Track history for time interval
+            const pauseTimeRef = useRef(null); // Track pause start time for time adjustment
+            const isPausedRef = useRef(false); // Track pause state for interval
 
             // Typing animation function - reveals words one by one with natural human-like variation
             const typeWords = (entryId, fullText, onComplete = null) => {
@@ -629,8 +616,537 @@ Keep it brief (1-2 sentences) and conversational.
                 }
             };
 
-            // 1. Initialize the LLM Engine
+            // Update pause ref when state changes
             useEffect(() => {
+                isPausedRef.current = isPaused;
+            }, [isPaused]);
+
+            // Handle pause/resume toggle
+            const handlePauseToggle = () => {
+                const newPausedState = !isPaused;
+                setIsPaused(newPausedState);
+                
+                if (newPausedState) {
+                    // Pausing - store current time
+                    pauseTimeRef.current = Date.now();
+                    processingRef.current = true; // Stop processing
+                } else {
+                    // Resuming/Starting - adjust conversation start time if in custom mode
+                    if (config && config.time.mode === "custom" && pauseTimeRef.current && conversationStartTimeRef.current) {
+                        const pauseDuration = Date.now() - pauseTimeRef.current;
+                        conversationStartTimeRef.current += pauseDuration; // Add pause time to start time
+                    }
+                    pauseTimeRef.current = null;
+                    processingRef.current = false; // Resume processing
+                    
+                    // If history is empty, start the conversation with initial message
+                    if (history.length === 0 && config && config.initialMessage) {
+                        const initialText = config.initialMessage;
+                        const initialEntry = { 
+                            id: 'A', 
+                            text: initialText, 
+                            uniqueId: Date.now(),
+                            displayedText: ""
+                        };
+                        setHistory([initialEntry]);
+                        
+                        // Start typing animation for initial message
+                        setTimeout(() => {
+                            typeWords(initialEntry.uniqueId, initialText);
+                        }, 500);
+                        
+                        // Start conversation timer for custom mode
+                        if (config.time.mode === "custom" && !conversationStartTimeRef.current) {
+                            conversationStartTimeRef.current = Date.now();
+                        }
+                    } else {
+                        // Resume existing conversation
+                        setTurnCounter(prev => prev + 1); // Trigger next turn
+                    }
+                }
+            };
+
+            // Handle clear conversation
+            const handleClearConversation = () => {
+                setConfirmationModal({
+                    message: "Are you sure you want to clear the conversation? This cannot be undone.",
+                    onConfirm: () => {
+                        // Clear in-memory state
+                        setHistory([]);
+                        historyRef.current = [];
+                        nextResponseRef.current = null;
+                        processingRef.current = false;
+                        setThinkingSpeaker(null);
+                        setTurnCounter(0);
+                        if (typingTimeoutRef.current) {
+                            clearTimeout(typingTimeoutRef.current);
+                            typingTimeoutRef.current = null;
+                        }
+                        
+                        // Clear from conversations array (which will update localStorage)
+                        if (activeConversationId) {
+                            setConversations(prev => prev.map(conv => {
+                                if (conv.id === activeConversationId) {
+                                    return {
+                                        ...conv,
+                                        history: [],
+                                        lastMessage: "",
+                                        lastMessageTime: new Date().toISOString(),
+                                        state: {
+                                            ...conv.state,
+                                            turnCounter: 0,
+                                            processing: false
+                                        }
+                                    };
+                                }
+                                return conv;
+                            }));
+                        }
+                        setConfirmationModal(null);
+                    },
+                    onCancel: () => {
+                        setConfirmationModal(null);
+                    }
+                });
+            };
+
+            // Handle export conversation
+            const handleExportConversation = () => {
+                if (!config || history.length === 0) {
+                    alert("No conversation to export.");
+                    return;
+                }
+
+                const conversationText = history
+                    .map(entry => {
+                        const speakerName = entry.id === 'A' ? config.characters.A.name : config.characters.B.name;
+                        return `${speakerName}: ${entry.text}`;
+                    })
+                    .join('\n\n');
+
+                const blob = new Blob([conversationText], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `conversation-${config.profile.name || 'export'}-${new Date().toISOString().split('T')[0]}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            };
+
+            // Handle back to config
+            const handleBackToConfig = () => {
+                setConfirmationModal({
+                    message: "Are you sure you want to go back to configuration? The current conversation will be lost.",
+                    onConfirm: () => {
+                        setHistory([]);
+                        historyRef.current = [];
+                        nextResponseRef.current = null;
+                        processingRef.current = false;
+                        setThinkingSpeaker(null);
+                        setTurnCounter(0);
+                        setIsPaused(false);
+                        setTimeRemaining(null);
+                        if (typingTimeoutRef.current) {
+                            clearTimeout(typingTimeoutRef.current);
+                            typingTimeoutRef.current = null;
+                        }
+                        if (timeIntervalRef.current) {
+                            clearInterval(timeIntervalRef.current);
+                            timeIntervalRef.current = null;
+                        }
+                        if (speechSynthesisRef.current) {
+                            speechSynthesisRef.current.cancel();
+                        }
+                        setConfirmationModal(null);
+                        setShowConfigModal(true); // Show config modal
+                    },
+                    onCancel: () => {
+                        setConfirmationModal(null);
+                    }
+                });
+            };
+
+            // Save current conversation state before switching
+            const saveCurrentConversationState = () => {
+                if (activeConversationId && config) {
+                    setConversations(prev => prev.map(conv => {
+                        if (conv.id === activeConversationId) {
+                            const lastEntry = history[history.length - 1];
+                            return {
+                                ...conv,
+                                config: config,
+                                history: history,
+                                lastMessage: lastEntry?.text || "",
+                                lastMessageTime: new Date().toISOString(),
+                                state: {
+                                    isPaused: isPaused,
+                                    turnCounter: turnCounter,
+                                    timeRemaining: timeRemaining,
+                                    conversationStartTime: conversationStartTimeRef.current,
+                                    pauseTime: pauseTimeRef.current,
+                                    processing: processingRef.current
+                                }
+                            };
+                        }
+                        return conv;
+                    }));
+                }
+            };
+
+            // Load conversations from localStorage (only on mount)
+            useEffect(() => {
+                const savedConversations = localStorage.getItem('llmtalk_conversations');
+                if (savedConversations) {
+                    try {
+                        const parsed = JSON.parse(savedConversations);
+                        // Ensure all conversations have unique IDs
+                        const conversationsWithIds = parsed.map(conv => {
+                            if (!conv.id) {
+                                // Generate ID for conversations without one
+                                conv.id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                            }
+                            return conv;
+                        });
+                        setConversations(conversationsWithIds);
+                        if (conversationsWithIds.length > 0 && !activeConversationId) {
+                            const firstConv = conversationsWithIds[0];
+                            setActiveConversationId(firstConv.id);
+                            setConfig(firstConv.config);
+                            setHistory(firstConv.history || []);
+                            
+                            // Restore conversation state
+                            if (firstConv.state) {
+                                setIsPaused(firstConv.state.isPaused !== undefined ? firstConv.state.isPaused : true);
+                                setTurnCounter(firstConv.state.turnCounter || 0);
+                                setTimeRemaining(firstConv.state.timeRemaining || null);
+                                conversationStartTimeRef.current = firstConv.state.conversationStartTime || null;
+                                pauseTimeRef.current = firstConv.state.pauseTime || null;
+                                nextResponseRef.current = null; // Don't restore pre-generated responses
+                                processingRef.current = firstConv.state.processing || false;
+                            } else {
+                                // Default state - start paused
+                                setIsPaused(true);
+                                setTurnCounter(0);
+                                setTimeRemaining(null);
+                                conversationStartTimeRef.current = null;
+                                pauseTimeRef.current = null;
+                                nextResponseRef.current = null;
+                                processingRef.current = false;
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Error loading conversations:", e);
+                    }
+                }
+            }, []); // Only run on mount
+
+            // Save conversations to localStorage whenever conversations change
+            useEffect(() => {
+                if (conversations.length > 0) {
+                    try {
+                        localStorage.setItem('llmtalk_conversations', JSON.stringify(conversations));
+                    } catch (e) {
+                        console.error("Error saving conversations to localStorage:", e);
+                    }
+                }
+            }, [conversations]);
+            
+            // Also save on window unload
+            useEffect(() => {
+                const handleBeforeUnload = () => {
+                    // Save current state before unload
+                    if (activeConversationId && config) {
+                        const lastEntry = history[history.length - 1];
+                        const updatedConversations = conversations.map(conv => {
+                            if (conv.id === activeConversationId) {
+                                return {
+                                    ...conv,
+                                    config: config,
+                                    history: history,
+                                    lastMessage: lastEntry?.text || "",
+                                    lastMessageTime: new Date().toISOString(),
+                                    state: {
+                                        isPaused: isPaused,
+                                        turnCounter: turnCounter,
+                                        timeRemaining: timeRemaining,
+                                        conversationStartTime: conversationStartTimeRef.current,
+                                        pauseTime: pauseTimeRef.current,
+                                        processing: processingRef.current
+                                    }
+                                };
+                            }
+                            return conv;
+                        });
+                        
+                        try {
+                            localStorage.setItem('llmtalk_conversations', JSON.stringify(updatedConversations));
+                        } catch (e) {
+                            console.error("Error saving conversations on unload:", e);
+                        }
+                    }
+                };
+                
+                window.addEventListener('beforeunload', handleBeforeUnload);
+                return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+            }, [conversations, activeConversationId, config, history, isPaused, turnCounter, timeRemaining]);
+
+            // Handle config submission
+            const handleConfigSubmit = (newConfig) => {
+                // Save current conversation state before creating new one
+                saveCurrentConversationState();
+                
+                // Stop current conversation processing
+                processingRef.current = true;
+                setIsPaused(true);
+                if (typingTimeoutRef.current) {
+                    clearTimeout(typingTimeoutRef.current);
+                    typingTimeoutRef.current = null;
+                }
+                if (timeIntervalRef.current) {
+                    clearInterval(timeIntervalRef.current);
+                    timeIntervalRef.current = null;
+                }
+                nextResponseRef.current = null;
+                setThinkingSpeaker(null);
+                
+                // Generate truly unique ID: timestamp + random number
+                const conversationId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                const newConversation = {
+                    id: conversationId,
+                    config: newConfig,
+                    history: [],
+                    lastMessage: "",
+                    lastMessageTime: new Date().toISOString(),
+                    createdAt: new Date().toISOString(),
+                    state: {
+                        isPaused: true, // Start paused - user must press play
+                        turnCounter: 0,
+                        timeRemaining: null,
+                        conversationStartTime: null,
+                        pauseTime: null,
+                        nextResponse: null,
+                        processing: false
+                    }
+                };
+                
+                // Add new conversation to the list, ensuring it's added properly
+                setConversations(prev => {
+                    // Check if conversation with this ID already exists (shouldn't happen, but safety check)
+                    const exists = prev.some(conv => conv.id === conversationId);
+                    if (exists) {
+                        console.warn("Conversation ID already exists, generating new one");
+                        const newId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                        return [{ ...newConversation, id: newId }, ...prev];
+                    }
+                    return [newConversation, ...prev];
+                });
+                
+                setActiveConversationId(conversationId);
+                setConfig(newConfig);
+                setHistory([]);
+                setIsPaused(true); // Start paused - user must press play
+                setTurnCounter(0);
+                setTimeRemaining(null);
+                setStatus("Initializing WebGPU...");
+                setShowConfigModal(false); // Close the modal
+            };
+
+            // Handle conversation selection
+            const handleConversationSelect = (conversationId) => {
+                // Save current conversation state before switching
+                saveCurrentConversationState();
+                
+                // Stop current conversation processing
+                processingRef.current = true;
+                setIsPaused(true);
+                if (typingTimeoutRef.current) {
+                    clearTimeout(typingTimeoutRef.current);
+                    typingTimeoutRef.current = null;
+                }
+                if (timeIntervalRef.current) {
+                    clearInterval(timeIntervalRef.current);
+                    timeIntervalRef.current = null;
+                }
+                nextResponseRef.current = null;
+                setThinkingSpeaker(null);
+                
+                const conversation = conversations.find(c => c.id === conversationId);
+                if (conversation) {
+                    setActiveConversationId(conversationId);
+                    setConfig(conversation.config);
+                    setHistory(conversation.history || []);
+                    
+                    // Restore conversation state
+                    if (conversation.state) {
+                        setIsPaused(conversation.state.isPaused || false);
+                        setTurnCounter(conversation.state.turnCounter || 0);
+                        setTimeRemaining(conversation.state.timeRemaining || null);
+                        conversationStartTimeRef.current = conversation.state.conversationStartTime || null;
+                        pauseTimeRef.current = conversation.state.pauseTime || null;
+                        nextResponseRef.current = null; // Don't restore pre-generated responses
+                        processingRef.current = conversation.state.processing || false;
+                    } else {
+                        // Default state for old conversations - start paused
+                        setIsPaused(true);
+                        setTurnCounter(0);
+                        setTimeRemaining(null);
+                        conversationStartTimeRef.current = null;
+                        pauseTimeRef.current = null;
+                        nextResponseRef.current = null;
+                        processingRef.current = false;
+                    }
+                    
+                    setChatListOpen(false); // Close on mobile
+                }
+            };
+
+            // Update conversation state whenever it changes
+            useEffect(() => {
+                if (activeConversationId && config) {
+                    setConversations(prev => {
+                        // Check if the conversation exists in the list
+                        const exists = prev.some(conv => conv.id === activeConversationId);
+                        if (!exists) {
+                            // Don't update if conversation doesn't exist yet (new conversation being created)
+                            return prev;
+                        }
+                        return prev.map(conv => {
+                            if (conv.id === activeConversationId) {
+                                const lastEntry = history[history.length - 1];
+                                return {
+                                    ...conv,
+                                    config: config,
+                                    history: history,
+                                    lastMessage: lastEntry?.text || "",
+                                    lastMessageTime: new Date().toISOString(),
+                                    state: {
+                                        isPaused: isPaused,
+                                        turnCounter: turnCounter,
+                                        timeRemaining: timeRemaining,
+                                        conversationStartTime: conversationStartTimeRef.current,
+                                        pauseTime: pauseTimeRef.current,
+                                        processing: processingRef.current
+                                    }
+                                };
+                            }
+                            return conv;
+                        });
+                    });
+                }
+            }, [history, activeConversationId, isPaused, turnCounter, timeRemaining, config]);
+
+            // Get avatar initials
+            const getAvatarInitials = (config) => {
+                if (!config) return "?";
+                const nameA = config.characters?.A?.name || "A";
+                const nameB = config.characters?.B?.name || "B";
+                return (nameA[0] + nameB[0]).toUpperCase();
+            };
+
+            // Format time
+            const formatTime = (dateString) => {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diff = now - date;
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                
+                if (days === 0) {
+                    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                } else if (days === 1) {
+                    return "Yesterday";
+                } else if (days < 7) {
+                    return date.toLocaleDateString('en-US', { weekday: 'short' });
+                } else {
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                }
+            };
+
+            // Filter and sort conversations by search and last message time
+            const filteredConversations = conversations
+                .filter(conv => {
+                    if (!searchQuery) return true;
+                    const query = searchQuery.toLowerCase();
+                    const profileName = conv.config?.profile?.name || "";
+                    const charA = conv.config?.characters?.A?.name || "";
+                    const charB = conv.config?.characters?.B?.name || "";
+                    const lastMsg = conv.lastMessage || "";
+                    return profileName.toLowerCase().includes(query) ||
+                           charA.toLowerCase().includes(query) ||
+                           charB.toLowerCase().includes(query) ||
+                           lastMsg.toLowerCase().includes(query);
+                })
+                .sort((a, b) => {
+                    // Sort by last message time (most recent first)
+                    const timeA = new Date(a.lastMessageTime || a.createdAt || 0).getTime();
+                    const timeB = new Date(b.lastMessageTime || b.createdAt || 0).getTime();
+                    return timeB - timeA;
+                });
+
+            // Generate summary from conversation history
+            const generateSummary = async (conversationHistory) => {
+                if (!engineRef.current || !config) {
+                    return { learningPoints: [] };
+                }
+
+                try {
+                    // Create a summary of the conversation
+                    const conversationText = conversationHistory
+                        .map(entry => `${entry.id === 'A' ? config.characters.A.name : config.characters.B.name}: ${entry.text}`)
+                        .join('\n');
+
+                    const summaryPrompt = `Based on the following conversation, extract 5-7 key learning points as bullet points. Focus on the main insights, ideas, and takeaways from the discussion. Format each point as a clear, concise sentence.
+
+Conversation:
+${conversationText}
+
+Key Learning Points:`;
+
+                    const messages = [
+                        { role: "system", content: "You are a helpful assistant that extracts key learning points from conversations." },
+                        { role: "user", content: summaryPrompt }
+                    ];
+
+                    const completion = await engineRef.current.chat.completions.create({
+                        messages,
+                        temperature: 0.7,
+                        max_tokens: 512,
+                    });
+
+                    const summaryText = completion.choices[0].message.content.trim();
+                    
+                    // Extract bullet points
+                    const learningPoints = summaryText
+                        .split('\n')
+                        .map(line => line.replace(/^[-•*]\s*/, '').replace(/^\d+\.\s*/, '').trim())
+                        .filter(line => line.length > 0)
+                        .slice(0, 7); // Limit to 7 points
+
+                    return { learningPoints };
+                } catch (err) {
+                    console.error("Summary generation failed:", err);
+                    return { learningPoints: [] };
+                }
+            };
+
+            // 1. Initialize the LLM Engine (only when config is set and engine doesn't exist)
+            useEffect(() => {
+                if (!config) return; // Don't initialize until config is set
+                
+                // Don't reinitialize if engine already exists (reuse it)
+                if (engineRef.current) {
+                    setStatus(""); // Clear status
+                    // Don't automatically start conversation - wait for user to press play
+                    // If history exists, don't reset it - resume from where we left off
+                    if (history.length > 0) {
+                        // Don't automatically resume - user must press play
+                        processingRef.current = false;
+                    }
+                    // Don't automatically add initial message - wait for user to press play
+                    return;
+                }
+
                 async function initEngine() {
                     // Check for WebGPU support
                     if (!navigator.gpu) {
@@ -671,20 +1187,48 @@ Keep it brief (1-2 sentences) and conversational.
                         engineRef.current = engine;
                         setStatus(""); // Clear status on success
 
-                        // Seed the conversation about existence
-                        const initialText = "Do you think we're here for a reason, or is it all just random?";
-                        const initialEntry = { 
-                            id: 'A', 
-                            text: initialText, 
-                            uniqueId: Date.now(),
-                            displayedText: ""
-                        };
-                        setHistory([initialEntry]);
+                        // Don't automatically start conversation - wait for user to press play
+                        // Set processing to false so conversation can start when user presses play
+                        processingRef.current = false;
                         
-                        // Start typing animation for initial message
-                        setTimeout(() => {
-                            typeWords(initialEntry.uniqueId, initialText);
-                        }, 500);
+                        // Track conversation start time for custom time mode
+                        if (config.time.mode === "custom") {
+                            // Restore conversation start time if it exists, otherwise start new
+                            if (!conversationStartTimeRef.current) {
+                                conversationStartTimeRef.current = Date.now();
+                            }
+                            
+                            // Set up time tracking interval
+                            if (!timeIntervalRef.current) {
+                                timeIntervalRef.current = setInterval(() => {
+                                    // Skip if paused
+                                    if (isPausedRef.current) return;
+                                    
+                                    if (!conversationStartTimeRef.current) return;
+                                    
+                                    const elapsed = Date.now() - conversationStartTimeRef.current;
+                                    const remaining = config.time.duration - elapsed;
+                                    
+                                    if (remaining <= 0) {
+                                        // Time's up - stop conversation and generate summary
+                                        clearInterval(timeIntervalRef.current);
+                                        timeIntervalRef.current = null;
+                                        setTimeRemaining(0);
+                                        processingRef.current = true; // Stop further processing
+                                        
+                                        // Generate summary with current history from ref
+                                        generateSummary(historyRef.current).then(summaryData => {
+                                            setSummary(summaryData);
+                                            setShowSummary(true);
+                                        });
+                                    } else {
+                                        const minutes = Math.floor(remaining / 60000);
+                                        const seconds = Math.floor((remaining % 60000) / 1000);
+                                        setTimeRemaining({ minutes, seconds });
+                                    }
+                                }, 1000);
+                            }
+                        }
 
                     } catch (err) {
                         console.error("Init error details:", err);
@@ -698,11 +1242,22 @@ Keep it brief (1-2 sentences) and conversational.
                     }
                 }
                 initEngine();
-            }, []);
+
+                // Cleanup time interval on unmount or config change
+                return () => {
+                    // Don't clear interval if we're just switching conversations
+                    // Only clear if config is actually changing to null
+                };
+            }, [config, history, isPaused, activeConversationId]);
 
             // Function to generate next response in the background
             const generateNextResponse = async (currentHistory) => {
-                if (!engineRef.current) return null;
+                if (!engineRef.current || !config) return null;
+
+                // Check if time has expired (for custom mode)
+                if (config.time.mode === "custom" && timeRemaining === 0) {
+                    return null;
+                }
 
                 // Determine who speaks next
                 const lastSpeaker = currentHistory[currentHistory.length - 1].id;
@@ -711,7 +1266,11 @@ Keep it brief (1-2 sentences) and conversational.
                 // Prepare context for the LLM. 
                 // We feed it recent history to maintain continuity.
                 const recentHistory = currentHistory.slice(-6); // Keep last 6 turns for context
-                const systemPrompt = nextSpeaker === 'A' ? PHILOSOPHER_A_PROMPT : PHILOSOPHER_B_PROMPT;
+                const basePrompt = nextSpeaker === 'A' ? config.characters.A.prompt : config.characters.B.prompt;
+                const speakerName = nextSpeaker === 'A' ? config.characters.A.name : config.characters.B.name;
+                // Append emoji instructions to system prompt
+                const emojiInstruction = "\n\nIMPORTANT: Always use emojis to express emotions, actions, and reactions. DO NOT use text-based expressions like *yawn*, *sigh*, *shrugs*, etc. Instead, use emojis:\n\nHAPPINESS & JOY: 😊 😄 😃 😁 😆 😂 🤣 😹 😸 😺 😻 😍 🥰 😘 😗 😙 😚\nSADNESS & SORROW: 😢 😭 😿 😔 😞 😟 😕 🙁 ☹️ 😣 😖 😫 😩 🥺 😪\nANGER & FRUSTRATION: 😡 😠 🤬 😤 😾 👿 💢\nSURPRISE & SHOCK: 😮 😯 😲 😱 🤯 😳 🥴\nTHINKING & CONFUSION: 🤔 💭 🧐 🤨 😕 🤷 🤷‍♂️ 🤷‍♀️\nTIRED & SLEEPY: 😴 😪 💤 🥱 😮‍💨\nLOVE & AFFECTION: ❤️ 💕 💖 💗 💓 💞 💝 💘 💟 🥰 😍 😘 💋\nAPPROVAL & SUPPORT: 👍 👏 🙌 👌 ✌️ 🤝 🤗 🤝\nDISAPPROVAL & DISGUST: 👎 🙄 😒 😏 🤢 🤮 🤧\nEXCITEMENT & ENERGY: 🎉 🎊 🥳 🚀 🔥 💯 ⚡️ 🌟 ✨\nNERVOUS & ANXIOUS: 😰 😨 😓 😥 😟 😦 😧 😬\nRELIEF & CALM: 😌 😊 ☺️ 😇 🙏\nBORED & UNIMPRESSED: 😑 😐 😶 😶‍🌫️ 🥱\nCOOL & CONFIDENT: 😎 🕶️ 😏 😌\nEMBARRASSED & SHY: 😳 😊 😅 🙈\nCELEBRATION & SUCCESS: 🎉 🎊 🥳 🎈 🎁 🏆 🥇 🎯\nPHYSICAL STATES: 🤒 🤕 🤢 🤮 🤧 🥵 🥶 😵 😵‍💫\nCOMMON ACTIONS: 🤷 (shrug) 👋 (wave) 👏 (clap) 🙌 (raise hands) 🤝 (handshake) 🙏 (pray/thank) ✍️ (write) 💪 (strong) 🤗 (hug) 🤞 (fingers crossed) 🤘 (rock on) ✌️ (peace) 👌 (ok) 👍 (thumbs up) 👎 (thumbs down) 🤚 (stop) ✋ (high five) 🤏 (pinch) 🤙 (call me) 👈 👉 👆 👇 (pointing) 🤛 🤜 (fist bump) 👊 (punch) ✊ (fist) 👐 (open hands) 🤲 (palms together) 🙋 (raising hand) 🙇 (bowing) 💃 (dancing) 🕺 (dancing) 🏃 (running) 🚶 (walking) 🧘 (meditating) 🧗 (climbing) 🏊 (swimming) 🚴 (cycling) 🏋️ (lifting) ⛹️ (bouncing ball) 🏄 (surfing) 🚣 (rowing) 🏇 (horse racing) ⛷️ (skiing) 🏂 (snowboarding) 🏌️ (golfing) 🤺 (fencing) 🏃‍♀️ 🏃‍♂️ (running) 🚶‍♀️ 🚶‍♂️ (walking)\n\nExpress all emotions and actions with emojis, not text in asterisks.";
+                const systemPrompt = basePrompt + emojiInstruction;
                 const messages = [
                     { role: "system", content: systemPrompt },
                     ...recentHistory.map(entry => ({
@@ -719,7 +1278,7 @@ Keep it brief (1-2 sentences) and conversational.
                         content: entry.text
                     })),
                     // Prompt it to act as the next speaker
-                    { role: "user", content: `You are ${nextSpeaker}. Continue the conversation about existence.` }
+                    { role: "user", content: `You are ${speakerName}. Continue the conversation.` }
                 ];
 
                 try {
@@ -743,8 +1302,13 @@ Keep it brief (1-2 sentences) and conversational.
 
             // 2. Main Conversation Loop - continues infinitely
             useEffect(() => {
-                // Don't run if engine isn't ready, already processing, or empty history
-                if (!engineRef.current || processingRef.current || history.length === 0) return;
+                // Don't run if engine isn't ready, already processing, empty history, no config, or paused
+                if (!engineRef.current || processingRef.current || history.length === 0 || !config || isPaused) return;
+                
+                // Check if time has expired (for custom mode)
+                if (config.time.mode === "custom" && timeRemaining === 0) {
+                    return;
+                }
 
                 // Check if we have a pre-generated response ready
                 if (nextResponseRef.current) {
@@ -864,7 +1428,12 @@ Keep it brief (1-2 sentences) and conversational.
                 // Start generation loop
                 generateNextTurn();
 
-            }, [history, turnCounter]); // Include turnCounter to trigger next turn
+            }, [history, turnCounter, config, timeRemaining, isPaused]); // Include turnCounter and isPaused to trigger next turn
+
+            // Update history ref when history changes
+            useEffect(() => {
+                historyRef.current = history;
+            }, [history]);
 
             // Auto-scroll when text updates or thinking bubble appears
             useEffect(() => {
@@ -880,44 +1449,200 @@ Keep it brief (1-2 sentences) and conversational.
                 };
             }, []);
 
+            // Show config modal when no conversations exist and no config is set
+            useEffect(() => {
+                // Wait a bit for conversations to load from localStorage on initial mount
+                const timer = setTimeout(() => {
+                    if (conversations.length === 0 && !config && !showConfigModal) {
+                        setShowConfigModal(true);
+                    }
+                }, 300);
+                return () => clearTimeout(timer);
+            }, [conversations.length, config, showConfigModal]);
+
             return (
                 <>
+                    {/* Summary Modal */}
+                    {showSummary && summary && (
+                        <SummaryModal 
+                            summary={summary} 
+                            onClose={() => setShowSummary(false)} 
+                        />
+                    )}
+
+                    {/* Confirmation Modal */}
+                    {confirmationModal && (
+                        <ConfirmationModal 
+                            message={confirmationModal.message}
+                            onConfirm={confirmationModal.onConfirm}
+                            onCancel={confirmationModal.onCancel}
+                        />
+                    )}
+
+                    {/* Config Modal */}
+                    {showConfigModal && (
+                        <ConfigModal 
+                            onConfigSubmit={handleConfigSubmit}
+                            onClose={() => {
+                                // Only allow closing if there are existing conversations
+                                if (conversations.length > 0) {
+                                    setShowConfigModal(false);
+                                }
+                            }}
+                        />
+                    )}
+
+                    {/* Time Remaining Display (for custom mode) */}
+                    {config && config.time.mode === "custom" && timeRemaining && timeRemaining !== 0 && (
+                        <div className="fixed top-[60px] right-5 bg-telegram-blue/95 text-white py-1.5 px-3 rounded-[18px] text-[13px] font-medium z-[1000] shadow-[0_2px_8px_rgba(0,0,0,0.15)] backdrop-blur-[10px]">
+                            {timeRemaining.minutes}:{timeRemaining.seconds.toString().padStart(2, '0')} remaining
+                        </div>
+                    )}
+
                     {/* Menu Overlay */}
                     <div 
-                        className={`menu-overlay ${menuOpen ? 'open' : ''}`}
+                        className={`fixed inset-0 bg-black/40 transition-all duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] z-[999] ${menuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
                         onClick={() => setMenuOpen(false)}
                     />
                     
-                    {/* Side Menu */}
-                    <div className={`side-menu ${menuOpen ? 'open' : ''}`}>
-                        <div className="menu-header">
-                            <div className="menu-title">Settings</div>
-                            <div className="menu-close" onClick={() => setMenuOpen(false)}>×</div>
+                    {/* Chat List Overlay (Mobile) */}
+                    {chatListOpen && (
+                        <div 
+                            className="fixed inset-0 bg-black/40 opacity-100 visible z-[1400]"
+                            onClick={() => setChatListOpen(false)}
+                        />
+                    )}
+                    
+                    {/* Side Menu (Settings) */}
+                    <div className={`fixed top-0 left-0 w-[280px] h-full bg-white shadow-[2px_0_8px_rgba(0,0,0,0.12)] transition-transform duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] z-[2000] overflow-y-auto ${menuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+                            <div className="text-lg font-medium text-black">Settings</div>
+                            <div className="w-6 h-6 cursor-pointer flex items-center justify-center text-telegram-gray text-2xl leading-none hover:text-black" onClick={() => setMenuOpen(false)}>×</div>
                         </div>
-                        <div className="menu-item">
-                            <div className="menu-item-icon">🔊</div>
-                            <div className="menu-item-label">Read Messages Aloud</div>
+                        <div className="py-3 px-4 flex items-center gap-3 cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50">
+                            <div className="w-6 h-6 flex items-center justify-center text-telegram-gray">🔊</div>
+                            <div className="flex-1 text-[15px] text-black">Read Messages Aloud</div>
                             <div 
-                                className={`toggle-switch ${voiceActivationEnabled ? 'active' : ''}`}
+                                className={`w-11 h-6 rounded-xl relative cursor-pointer transition-colors ${voiceActivationEnabled ? 'bg-telegram-blue' : 'bg-gray-300'} after:content-[''] after:absolute after:w-5 after:h-5 after:rounded-full after:bg-white after:top-0.5 after:left-0.5 after:transition-transform after:shadow-[0_1px_3px_rgba(0,0,0,0.3)] ${voiceActivationEnabled ? 'after:translate-x-5' : ''}`}
                                 onClick={handleVoiceActivationToggle}
                             />
                         </div>
+                        <div className="py-3 px-4 flex items-center gap-3 cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50" onClick={handleBackToConfig}>
+                            <div className="w-6 h-6 flex items-center justify-center text-telegram-gray">⚙️</div>
+                            <div className="flex-1 text-[15px] text-black">Back to Configuration</div>
+                        </div>
                     </div>
 
-                    <div className="void-container">
-                        {/* Telegram-style Header */}
-                        <div className="chat-header">
-                            <div className="header-left">
-                                <div className="hamburger-menu" onClick={() => setMenuOpen(true)}>
-                                    <div className="hamburger-line"></div>
-                                    <div className="hamburger-line"></div>
-                                    <div className="hamburger-line"></div>
+                    {/* New Chat Button - only show when there are conversations */}
+                    {conversations.length > 0 && (
+                        <button 
+                            className="fixed bottom-5 right-5 w-14 h-14 rounded-full bg-telegram-blue text-white border-none text-2xl cursor-pointer shadow-[0_4px_12px_rgba(51,144,236,0.4)] transition-all duration-200 z-[1000] flex items-center justify-center hover:bg-[#2a7fd4] hover:scale-110 active:scale-95"
+                            onClick={() => {
+                                saveCurrentConversationState();
+                                setShowConfigModal(true);
+                            }}
+                            title="New Conversation"
+                        >
+                            +
+                        </button>
+                    )}
+
+                    <div className="flex h-full w-full overflow-hidden">
+                        {/* Chat List Sidebar */}
+                        <div className={`w-[420px] h-full bg-white border-r border-gray-200 flex flex-col overflow-hidden relative z-10 max-md:fixed max-md:top-0 max-md:left-0 max-md:w-full max-md:h-full max-md:z-[1500] max-md:transition-transform max-md:duration-[250ms] max-md:ease-[cubic-bezier(0.4,0,0.2,1)] ${chatListOpen ? 'max-md:translate-x-0' : 'max-md:-translate-x-full'}`}>
+                            <div className="py-2 px-3 bg-white border-b border-gray-200 flex items-center gap-2 min-h-[54px]">
+                                <div className="w-10 h-10 cursor-pointer flex flex-col justify-center items-center p-2 rounded-full transition-colors flex-shrink-0 mr-0 hover:bg-black/5" onClick={() => {
+                                    if (window.innerWidth <= 480) {
+                                        setChatListOpen(!chatListOpen);
+                                    } else {
+                                        setMenuOpen(true);
+                                    }
+                                }}>
+                                    <div className="w-5 h-0.5 bg-telegram-gray rounded-sm transition-all my-0.5"></div>
+                                    <div className="w-5 h-0.5 bg-telegram-gray rounded-sm transition-all my-0.5"></div>
+                                    <div className="w-5 h-0.5 bg-telegram-gray rounded-sm transition-all my-0.5"></div>
                                 </div>
-                                <div className="chat-title">Philosophical Dialogue</div>
+                                <input
+                                    type="text"
+                                    className="flex-1 py-2 px-4 border-none bg-gray-100 rounded-3xl text-sm font-sans text-black outline-none min-w-0 h-9 placeholder:text-gray-500 focus:bg-gray-200"
+                                    placeholder="Search"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                            <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-black/15 scrollbar-track-transparent">
+                                {filteredConversations.length > 0 ? (
+                                    filteredConversations.map((conversation) => (
+                                        <div
+                                            key={conversation.id}
+                                            className={`py-2.5 px-3 flex items-center gap-3 cursor-pointer border-b border-gray-100 transition-colors relative ${activeConversationId === conversation.id ? 'bg-[#e8f4f8] before:content-[""] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 before:bg-telegram-blue' : 'hover:bg-gray-50'}`}
+                                            onClick={() => handleConversationSelect(conversation.id)}
+                                        >
+                                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-lg font-medium flex-shrink-0">
+                                                {getAvatarInitials(conversation.config)}
+                                            </div>
+                                            <div className="flex-1 min-w-0 flex flex-col gap-1">
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <div className="text-[15px] font-medium text-black leading-5 overflow-hidden text-ellipsis whitespace-nowrap">
+                                                        {conversation.config?.profile?.name || `${conversation.config?.characters?.A?.name || 'A'} & ${conversation.config?.characters?.B?.name || 'B'}`}
+                                                    </div>
+                                                    <div className="text-[13px] text-telegram-gray flex-shrink-0">
+                                                        {formatTime(conversation.lastMessageTime || conversation.createdAt || new Date().toISOString())}
+                                                    </div>
+                                                </div>
+                                                <div className="text-sm text-telegram-gray leading-[18px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                                    {conversation.lastMessage || "No messages yet"}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="p-5 text-center text-telegram-gray text-sm">
+                                        No conversations yet
+                                    </div>
+                                )}
                             </div>
                         </div>
 
-                        <div className="dialogue-log">
+                        {/* Main Chat Container */}
+                        {config ? (
+                            <div className="flex flex-col h-full flex-1 min-w-0 m-0 p-0 bg-transparent shadow-none">
+                        {/* Telegram-style Header */}
+                        <div className="bg-white border-b border-gray-200 p-0 flex items-center justify-between h-[54px] relative z-[100] shadow-[0_1px_0_rgba(0,0,0,0.08)]">
+                            <div className="flex items-center gap-0 flex-1 px-3">
+                                <div className="text-[15px] font-medium text-black leading-5 flex-1 px-3">
+                                    {config.characters.A.name} & {config.characters.B.name}
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 px-3">
+                                <button 
+                                    className={`py-1.5 px-3.5 bg-gray-100 text-black border-none rounded-[20px] text-sm font-medium font-sans cursor-pointer transition-all duration-200 flex items-center justify-center gap-1.5 min-h-8 whitespace-nowrap hover:bg-gray-200 active:bg-gray-300 active:scale-[0.98] ${isPaused ? 'bg-gray-100 text-black' : ''}`}
+                                    onClick={handlePauseToggle}
+                                    title={isPaused ? "Resume" : "Pause"}
+                                >
+                                    <span className="text-base">{isPaused ? '▶' : '⏸'}</span>
+                                    <span>{isPaused ? 'Resume' : 'Pause'}</span>
+                                </button>
+                                <button 
+                                    className="py-1.5 px-3.5 bg-red-500 text-white border-none rounded-[20px] text-sm font-medium font-sans cursor-pointer transition-all duration-200 flex items-center justify-center gap-1.5 min-h-8 whitespace-nowrap hover:bg-red-700 active:bg-red-800 active:scale-[0.98]"
+                                    onClick={handleClearConversation}
+                                    title="Clear Conversation"
+                                >
+                                    <span className="text-base">🗑</span>
+                                    <span>Clear</span>
+                                </button>
+                                <button 
+                                    className="py-1.5 px-3.5 bg-telegram-blue text-white border-none rounded-[20px] text-sm font-medium font-sans cursor-pointer transition-all duration-200 flex items-center justify-center gap-1.5 min-h-8 whitespace-nowrap hover:bg-[#2a7fd4] active:bg-[#1f6bb8] active:scale-[0.98]"
+                                    onClick={handleExportConversation}
+                                    title="Export Conversation"
+                                >
+                                    <span className="text-base">💾</span>
+                                    <span>Export</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex-grow overflow-y-auto py-3 bg-telegram-bg bg-[url('data:image/svg+xml,%3Csvg%20width%3D%27100%27%20height%3D%27100%27%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%3E%3Cdefs%3E%3Cpattern%20id%3D%27telegram-pattern%27%20x%3D%270%27%20y%3D%270%27%20width%3D%27100%27%20height%3D%27100%27%20patternUnits%3D%27userSpaceOnUse%27%3E%3Ccircle%20cx%3D%2750%27%20cy%3D%2750%27%20r%3D%271%27%20fill%3D%27%23ffffff%27%20opacity%3D%270.1%27/%3E%3C/pattern%3E%3C/defs%3E%3Crect%20width%3D%27100%27%20height%3D%27100%27%20fill%3D%27url(%23telegram-pattern)%27/%3E%3C/svg%3E')] bg-[radial-gradient(circle_at_20%_50%,rgba(120,119,198,0.08)_0%,transparent_50%),radial-gradient(circle_at_80%_80%,rgba(120,119,198,0.08)_0%,transparent_50%)] scrollbar-thin scrollbar-thumb-black/15 scrollbar-track-transparent">
                             {history.map((entry) => {
                                 // Render words with smooth fade-in animation if words array exists
                                 let textContent;
@@ -925,7 +1650,7 @@ Keep it brief (1-2 sentences) and conversational.
                                     const result = [];
                                     for (let i = 0; i < entry.visibleWordCount && i < entry.words.length; i++) {
                                         result.push(
-                                            <span key={`word-${i}`} className="word">{entry.words[i]}</span>
+                                            <span key={`word-${i}`} className="word inline-block align-baseline m-0 p-0 opacity-0">{entry.words[i]}</span>
                                         );
                                         // Add space after word if not the last word in array
                                         if (i < entry.words.length - 1) {
@@ -940,9 +1665,9 @@ Keep it brief (1-2 sentences) and conversational.
                                 }
                                 
                                 return (
-                                    <div key={entry.uniqueId} className={`entry speaker-${entry.id.toLowerCase()}`}>
-                                        <div className="message-bubble">
-                                            <span className="text">{textContent}</span>
+                                    <div key={entry.uniqueId} className={`mb-0.5 flex items-end animate-[messageSlideIn_0.2s_ease-out] px-2 ${entry.id.toLowerCase() === 'a' ? 'justify-start' : 'justify-end'}`}>
+                                        <div className={`max-w-[65%] py-2 px-3 rounded-[7.5px] relative break-words shadow-[0_1px_0.5px_rgba(0,0,0,0.13)] text-left overflow-wrap-break-word ${entry.id.toLowerCase() === 'a' ? 'bg-white text-black rounded-bl-none' : 'bg-telegram-green text-black rounded-br-none'}`}>
+                                            <span className="text-[14.2px] leading-[19px] text-left block m-0 p-0 indent-0 tracking-[-0.01em]">{textContent}</span>
                                         </div>
                                     </div>
                                 );
@@ -950,23 +1675,31 @@ Keep it brief (1-2 sentences) and conversational.
                             
                             {/* Thinking bubble animation */}
                             {thinkingSpeaker && (
-                                <div className={`thinking-bubble speaker-${thinkingSpeaker.toLowerCase()}`}>
-                                    <div className="thinking-bubble-content">
-                                        <span className="thinking-dot"></span>
-                                        <span className="thinking-dot"></span>
-                                        <span className="thinking-dot"></span>
+                                <div className={`flex items-center mb-3 animate-[messageSlideIn_0.3s_ease-out] ${thinkingSpeaker.toLowerCase() === 'a' ? 'justify-start' : 'justify-end'}`}>
+                                    <div className={`bg-white rounded-[7.5px] py-2 px-3 flex gap-1 items-center shadow-[0_1px_0.5px_rgba(0,0,0,0.13)] ${thinkingSpeaker.toLowerCase() === 'b' ? 'bg-telegram-green' : ''}`}>
+                                        <span className="thinking-dot w-2 h-2 rounded-full bg-gray-500"></span>
+                                        <span className="thinking-dot w-2 h-2 rounded-full bg-gray-500"></span>
+                                        <span className="thinking-dot w-2 h-2 rounded-full bg-gray-500"></span>
                                     </div>
                                 </div>
                             )}
                             
                             <div ref={bottomRef} />
                         </div>
-                        
+
                         {status && (
-                            <div className={`status-message ${isError ? 'error' : ''}`}>
+                            <div className={`fixed bottom-5 left-1/2 -translate-x-1/2 text-xs opacity-50 uppercase tracking-wider text-center w-full max-w-[680px] z-[1000] ${isError ? 'text-red-600 opacity-100' : ''}`}>
                                 {status}
                             </div>
                         )}
+                    </div>
+                    ) : (
+                        <div className="flex flex-col h-full flex-1 min-w-0 m-0 p-0 bg-transparent shadow-none flex items-center justify-center bg-telegram-bg">
+                            <div className="text-center text-telegram-gray text-[15px]">
+                                Select a chat to start messaging
+                            </div>
+                        </div>
+                    )}
                     </div>
                 </>
             );
