@@ -170,6 +170,7 @@ Keep it brief (1-2 sentences) and conversational.
         // ConfigModal Component
         function ConfigModal({ onConfigSubmit, onClose }) {
             const [profileName, setProfileName] = useState("");
+            const [profilePicture, setProfilePicture] = useState(null); // Store as data URL
             const [characterAName, setCharacterAName] = useState("A");
             const [characterAPrompt, setCharacterAPrompt] = useState(DEFAULT_PHILOSOPHER_A_PROMPT);
             const [characterBName, setCharacterBName] = useState("B");
@@ -177,6 +178,34 @@ Keep it brief (1-2 sentences) and conversational.
             const [timeMode, setTimeMode] = useState("infinite"); // "infinite" or "custom"
             const [customMinutes, setCustomMinutes] = useState(10);
             const [initialMessage, setInitialMessage] = useState("Do you think we're here for a reason, or is it all just random?");
+
+            // Handle profile picture selection
+            const handleProfilePictureChange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    // Validate file type
+                    if (!file.type.startsWith('image/')) {
+                        alert("Please select an image file");
+                        return;
+                    }
+                    // Validate file size (max 5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert("Image size should be less than 5MB");
+                        return;
+                    }
+                    // Convert to data URL
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        setProfilePicture(event.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            // Handle profile picture removal
+            const handleRemoveProfilePicture = () => {
+                setProfilePicture(null);
+            };
 
             const handleSubmit = (e) => {
                 e.preventDefault();
@@ -195,7 +224,8 @@ Keep it brief (1-2 sentences) and conversational.
 
                 const config = {
                     profile: {
-                        name: profileName.trim()
+                        name: profileName.trim(),
+                        picture: profilePicture || null
                     },
                     characters: {
                         A: {
@@ -246,6 +276,46 @@ Keep it brief (1-2 sentences) and conversational.
                                         placeholder="Enter your profile name"
                                         required
                                     />
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-[#1a1a1a] mb-2">Profile Picture</label>
+                                    <div className="flex items-center gap-4">
+                                        {profilePicture ? (
+                                            <div className="relative">
+                                                <img 
+                                                    src={profilePicture} 
+                                                    alt="Profile" 
+                                                    className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={handleRemoveProfilePicture}
+                                                    className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
+                                                    title="Remove picture"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-2xl font-medium border-2 border-gray-200">
+                                                ?
+                                            </div>
+                                        )}
+                                        <div className="flex-1">
+                                            <label className="cursor-pointer">
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleProfilePictureChange}
+                                                    className="hidden"
+                                                />
+                                                <div className="py-2.5 px-4 border border-gray-200 rounded-lg text-[15px] font-sans text-[#1a1a1a] bg-white transition-colors hover:bg-gray-50 focus:outline-none focus:border-telegram-blue cursor-pointer text-center">
+                                                    {profilePicture ? "Change Picture" : "Select Picture"}
+                                                </div>
+                                            </label>
+                                            <div className="text-xs text-telegram-gray mt-1">Max 5MB, JPG/PNG/GIF</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -429,6 +499,54 @@ Keep it brief (1-2 sentences) and conversational.
             );
         }
 
+        // LandingPage Component
+        function LandingPage({ onStartDownload, isDownloading, downloadStatus }) {
+            return (
+                <div className="fixed inset-0 bg-telegram-bg flex items-center justify-center z-[3000]">
+                    <div className="bg-white rounded-xl p-8 max-w-[600px] w-[90%] shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+                        <div className="text-center mb-6">
+                            <div className="text-[32px] font-medium text-black mb-2">Welcome to LLM Talk</div>
+                            <div className="text-[16px] text-telegram-gray">Philosophical Dialogue Platform</div>
+                        </div>
+                        
+                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-5 mb-6">
+                            <div className="text-[18px] font-medium text-black mb-3">⚠️ Important Disclaimer</div>
+                            <div className="text-[15px] text-[#1a1a1a] leading-relaxed space-y-2">
+                                <p>Before you begin, please note:</p>
+                                <ul className="list-disc list-inside space-y-1 ml-2">
+                                    <li>The AI model requires approximately <strong>1GB of storage space</strong> to download and cache</li>
+                                    <li>The model will run entirely in your browser using <strong>WebGPU</strong> - no data is sent to external servers</li>
+                                    <li>Initial download may take several minutes depending on your internet connection</li>
+                                    <li>Your browser must support <strong>WebGPU</strong> (Chrome/Edge 113+, Firefox 110+, Safari 18+)</li>
+                                    <li>The model will be cached in your browser for faster subsequent loads</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        {isDownloading ? (
+                            <div className="text-center">
+                                <div className="text-[16px] font-medium text-black mb-3">Downloading Model...</div>
+                                <div className="text-[14px] text-telegram-gray mb-4">{downloadStatus || "Preparing download..."}</div>
+                                <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+                                    <div className="bg-telegram-blue h-2 rounded-full transition-all duration-300" style={{ width: '60%' }}></div>
+                                </div>
+                                <div className="text-[13px] text-telegram-gray">Please wait, this may take a few minutes...</div>
+                            </div>
+                        ) : (
+                            <div className="flex gap-3">
+                                <button 
+                                    className="flex-1 py-3 bg-telegram-blue text-white border-none rounded-lg text-[16px] font-medium font-sans cursor-pointer hover:bg-[#2a7fd4] transition-colors" 
+                                    onClick={onStartDownload}
+                                >
+                                    Start Model Download
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
         function App() {
             const [config, setConfig] = useState(null); // Store config when submitted
             const [history, setHistory] = useState([]);
@@ -437,7 +555,6 @@ Keep it brief (1-2 sentences) and conversational.
             const [turnCounter, setTurnCounter] = useState(0); // Counter to trigger next turn
             const [thinkingSpeaker, setThinkingSpeaker] = useState(null); // Track who is thinking
             const [menuOpen, setMenuOpen] = useState(false); // Menu state
-            const [voiceActivationEnabled, setVoiceActivationEnabled] = useState(false); // Voice activation toggle (TTS)
             const [showSummary, setShowSummary] = useState(false); // Show summary modal
             const [summary, setSummary] = useState(null); // Store summary data
             const [timeRemaining, setTimeRemaining] = useState(null); // Time remaining for custom mode
@@ -448,14 +565,16 @@ Keep it brief (1-2 sentences) and conversational.
             const [searchQuery, setSearchQuery] = useState(""); // Search query for chat list
             const [confirmationModal, setConfirmationModal] = useState(null); // Confirmation modal state: { message, onConfirm }
             const [showConfigModal, setShowConfigModal] = useState(false); // Show config modal
+            const [showLandingPage, setShowLandingPage] = useState(false); // Show landing page
+            const [isDownloading, setIsDownloading] = useState(false); // Track download state
+            const [downloadStatus, setDownloadStatus] = useState(""); // Download status message
+            const [modelDownloaded, setModelDownloaded] = useState(false); // Track if model is downloaded
             const engineRef = useRef(null);
             const bottomRef = useRef(null);
             const processingRef = useRef(false);
             const typingTimeoutRef = useRef(null);
             const typingCallbacksRef = useRef({}); // Track callbacks for when typing completes
             const nextResponseRef = useRef(null); // Store next pre-generated response
-            const speechSynthesisRef = useRef(null); // Speech synthesis ref
-            const voiceActivationRef = useRef(false); // Voice activation ref for callbacks
             const conversationStartTimeRef = useRef(null); // Track when conversation started
             const timeIntervalRef = useRef(null); // Interval for time tracking
             const historyRef = useRef([]); // Track history for time interval
@@ -553,68 +672,6 @@ Keep it brief (1-2 sentences) and conversational.
                 typingTimeoutRef.current = setTimeout(typeNextWord, 400 + Math.random() * 300); // 400-700ms initial delay
             };
 
-            // Update voice activation ref when state changes
-            useEffect(() => {
-                voiceActivationRef.current = voiceActivationEnabled;
-            }, [voiceActivationEnabled]);
-
-            // Initialize Text-to-Speech
-            useEffect(() => {
-                if ('speechSynthesis' in window) {
-                    speechSynthesisRef.current = window.speechSynthesis;
-                    
-                    // Load voices (some browsers need this)
-                    if (speechSynthesisRef.current.getVoices().length === 0) {
-                        speechSynthesisRef.current.addEventListener('voiceschanged', () => {
-                            // Voices loaded
-                        });
-                    }
-                } else {
-                    console.warn('Speech synthesis not supported');
-                }
-            }, []);
-
-            // Function to speak text
-            const speakText = (text) => {
-                if (!speechSynthesisRef.current || !voiceActivationRef.current) {
-                    return;
-                }
-
-                // Cancel any ongoing speech
-                speechSynthesisRef.current.cancel();
-
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'en-US';
-                utterance.rate = 1.0;
-                utterance.pitch = 1.0;
-                utterance.volume = 1.0;
-
-                // Try to use a natural-sounding voice
-                const voices = speechSynthesisRef.current.getVoices();
-                if (voices.length > 0) {
-                    const preferredVoice = voices.find(voice => 
-                        voice.lang.includes('en') && 
-                        (voice.name.includes('Natural') || voice.name.includes('Premium') || voice.name.includes('Enhanced'))
-                    ) || voices.find(voice => voice.lang.includes('en-US')) || voices[0];
-                    
-                    if (preferredVoice) {
-                        utterance.voice = preferredVoice;
-                    }
-                }
-
-                speechSynthesisRef.current.speak(utterance);
-            };
-
-            // Handle voice activation toggle
-            const handleVoiceActivationToggle = () => {
-                const newValue = !voiceActivationEnabled;
-                setVoiceActivationEnabled(newValue);
-                
-                // If disabling, stop any ongoing speech
-                if (!newValue && speechSynthesisRef.current) {
-                    speechSynthesisRef.current.cancel();
-                }
-            };
 
             // Update pause ref when state changes
             useEffect(() => {
@@ -756,9 +813,6 @@ Keep it brief (1-2 sentences) and conversational.
                             clearInterval(timeIntervalRef.current);
                             timeIntervalRef.current = null;
                         }
-                        if (speechSynthesisRef.current) {
-                            speechSynthesisRef.current.cancel();
-                        }
                         setConfirmationModal(null);
                         setShowConfigModal(true); // Show config modal
                     },
@@ -794,6 +848,121 @@ Keep it brief (1-2 sentences) and conversational.
                     }));
                 }
             };
+
+            // Check if model is already downloaded (check localStorage)
+            const checkModelDownloaded = () => {
+                const modelDownloadedFlag = localStorage.getItem('llmtalk_model_downloaded');
+                return modelDownloadedFlag === 'true' || engineRef.current !== null;
+            };
+
+            // Handle start model download
+            const handleStartDownload = async () => {
+                setIsDownloading(true);
+                setDownloadStatus("Preparing download...");
+                
+                // Check for WebGPU support
+                if (!navigator.gpu) {
+                    setDownloadStatus("Error: WebGPU is not supported by this browser/device.");
+                    setIsError(true);
+                    setIsDownloading(false);
+                    return;
+                }
+                
+                // Check for secure context
+                if (!window.isSecureContext) {
+                    console.warn("Warning: Not running in a secure context (HTTPS or localhost). WebGPU may fail.");
+                }
+
+                try {
+                    // Wait for window.webllm to load from the module script
+                    let attempts = 0;
+                    while (!window.webllm && attempts < 100) {
+                        await new Promise(r => setTimeout(r, 100));
+                        attempts++;
+                    }
+                    if (!window.webllm) {
+                        throw new Error("Failed to load WebLLM library. Please check your internet connection or try a different browser.");
+                    }
+
+                    const { CreateMLCEngine } = window.webllm;
+                    setDownloadStatus("Downloading neural network to browser cache (this may take a while)...");
+
+                    // Create engine with explicit init options to aid debugging if it fails
+                    const engine = await CreateMLCEngine(MODEL_ID, {
+                        initProgressCallback: (report) => {
+                            setDownloadStatus(report.text);
+                        },
+                        logLevel: "INFO",
+                    });
+
+                    engineRef.current = engine;
+                    setModelDownloaded(true);
+                    localStorage.setItem('llmtalk_model_downloaded', 'true');
+                    setDownloadStatus("Download complete!");
+                    
+                    // Hide landing page and show config modal
+                    setTimeout(() => {
+                        setShowLandingPage(false);
+                        setIsDownloading(false);
+                        setShowConfigModal(true);
+                    }, 1000);
+                } catch (err) {
+                    console.error("Init error details:", err);
+                    if (err.message && err.message.includes("Invalid URL")) {
+                        setDownloadStatus("Error: Browser security blocked loading the AI engine. Try running this from a local server (http://localhost) instead of directly as a file.");
+                    } else {
+                        setDownloadStatus(`Error loading model: ${err.message || err}`);
+                    }
+                    setIsError(true);
+                    setIsDownloading(false);
+                }
+            };
+
+            // Check if model is downloaded on mount
+            useEffect(() => {
+                const isDownloaded = checkModelDownloaded();
+                if (!isDownloaded) {
+                    setShowLandingPage(true);
+                } else {
+                    setModelDownloaded(true);
+                    // If model is already downloaded, initialize engine if not already initialized
+                    if (!engineRef.current) {
+                        async function initExistingEngine() {
+                            try {
+                                if (!window.webllm) {
+                                    let attempts = 0;
+                                    while (!window.webllm && attempts < 100) {
+                                        await new Promise(r => setTimeout(r, 100));
+                                        attempts++;
+                                    }
+                                }
+                                if (window.webllm) {
+                                    const { CreateMLCEngine } = window.webllm;
+                                    const engine = await CreateMLCEngine(MODEL_ID, {
+                                        initProgressCallback: (report) => {
+                                            // Silent initialization for already downloaded model
+                                        },
+                                        logLevel: "INFO",
+                                    });
+                                    engineRef.current = engine;
+                                }
+                            } catch (err) {
+                                console.error("Error initializing existing engine:", err);
+                                // If initialization fails, show landing page
+                                setShowLandingPage(true);
+                                setModelDownloaded(false);
+                                localStorage.removeItem('llmtalk_model_downloaded');
+                            }
+                        }
+                        initExistingEngine();
+                    }
+                    // If model is already downloaded, show config modal if no conversations exist
+                    const savedConversations = localStorage.getItem('llmtalk_conversations');
+                    if (!savedConversations || JSON.parse(savedConversations).length === 0) {
+                        setShowConfigModal(true);
+                    }
+                }
+            }, []); // Only run on mount
 
             // Load conversations from localStorage (only on mount)
             useEffect(() => {
@@ -978,15 +1147,17 @@ Keep it brief (1-2 sentences) and conversational.
                     setConfig(conversation.config);
                     setHistory(conversation.history || []);
                     
-                    // Restore conversation state
+                    // Restore conversation state (but always start paused when switching)
                     if (conversation.state) {
-                        setIsPaused(conversation.state.isPaused || false);
+                        // Always pause when switching to a conversation
+                        setIsPaused(true);
                         setTurnCounter(conversation.state.turnCounter || 0);
                         setTimeRemaining(conversation.state.timeRemaining || null);
                         conversationStartTimeRef.current = conversation.state.conversationStartTime || null;
-                        pauseTimeRef.current = conversation.state.pauseTime || null;
+                        // Don't restore pauseTime - we're starting fresh paused
+                        pauseTimeRef.current = null;
                         nextResponseRef.current = null; // Don't restore pre-generated responses
-                        processingRef.current = conversation.state.processing || false;
+                        processingRef.current = true; // Always start paused
                     } else {
                         // Default state for old conversations - start paused
                         setIsPaused(true);
@@ -995,11 +1166,94 @@ Keep it brief (1-2 sentences) and conversational.
                         conversationStartTimeRef.current = null;
                         pauseTimeRef.current = null;
                         nextResponseRef.current = null;
-                        processingRef.current = false;
+                        processingRef.current = true; // Always start paused
                     }
                     
                     setChatListOpen(false); // Close on mobile
                 }
+            };
+
+            // Handle delete conversation
+            const handleDeleteConversation = (conversationId, e) => {
+                e.stopPropagation(); // Prevent triggering conversation selection
+                
+                const conversation = conversations.find(c => c.id === conversationId);
+                const conversationName = conversation?.config?.profile?.name || 
+                    `${conversation?.config?.characters?.A?.name || 'A'} & ${conversation?.config?.characters?.B?.name || 'B'}`;
+                
+                setConfirmationModal({
+                    message: `Are you sure you want to delete "${conversationName}"? This cannot be undone.`,
+                    onConfirm: () => {
+                        // Remove conversation from list first
+                        const remainingConversations = conversations.filter(c => c.id !== conversationId);
+                        setConversations(remainingConversations);
+                        
+                        // If deleting the active conversation, switch to another one or clear
+                        if (activeConversationId === conversationId) {
+                            // Stop current conversation processing
+                            processingRef.current = true;
+                            setIsPaused(true);
+                            if (typingTimeoutRef.current) {
+                                clearTimeout(typingTimeoutRef.current);
+                                typingTimeoutRef.current = null;
+                            }
+                            if (timeIntervalRef.current) {
+                                clearInterval(timeIntervalRef.current);
+                                timeIntervalRef.current = null;
+                            }
+                            nextResponseRef.current = null;
+                            setThinkingSpeaker(null);
+                            
+                            if (remainingConversations.length > 0) {
+                                // Switch to the first remaining conversation
+                                const nextConversation = remainingConversations[0];
+                                setActiveConversationId(nextConversation.id);
+                                setConfig(nextConversation.config);
+                                setHistory(nextConversation.history || []);
+                                
+                                // Restore conversation state (but always start paused when switching)
+                                if (nextConversation.state) {
+                                    // Always pause when switching to a conversation
+                                    setIsPaused(true);
+                                    setTurnCounter(nextConversation.state.turnCounter || 0);
+                                    setTimeRemaining(nextConversation.state.timeRemaining || null);
+                                    conversationStartTimeRef.current = nextConversation.state.conversationStartTime || null;
+                                    // Don't restore pauseTime - we're starting fresh paused
+                                    pauseTimeRef.current = null;
+                                    nextResponseRef.current = null;
+                                    processingRef.current = true; // Always start paused
+                                } else {
+                                    setIsPaused(true);
+                                    setTurnCounter(0);
+                                    setTimeRemaining(null);
+                                    conversationStartTimeRef.current = null;
+                                    pauseTimeRef.current = null;
+                                    nextResponseRef.current = null;
+                                    processingRef.current = true; // Always start paused
+                                }
+                            } else {
+                                // No conversations left, clear everything
+                                setActiveConversationId(null);
+                                setConfig(null);
+                                setHistory([]);
+                                historyRef.current = [];
+                                nextResponseRef.current = null;
+                                processingRef.current = false;
+                                setThinkingSpeaker(null);
+                                setTurnCounter(0);
+                                setIsPaused(false);
+                                setTimeRemaining(null);
+                                conversationStartTimeRef.current = null;
+                                pauseTimeRef.current = null;
+                            }
+                        }
+                        
+                        setConfirmationModal(null);
+                    },
+                    onCancel: () => {
+                        setConfirmationModal(null);
+                    }
+                });
             };
 
             // Update conversation state whenever it changes
@@ -1338,11 +1592,6 @@ Key Learning Points:`;
                             
                             // Start typing animation with callback for when it completes
                             typeWords(newEntry.uniqueId, text, () => {
-                                // Speak the message if it's from speaker B and voice activation is enabled
-                                if (speaker === 'B' && voiceActivationRef.current) {
-                                    speakText(text);
-                                }
-                                
                                 // After typing completes, wait 1-3 seconds before showing next response
                                 const postResponseThinkingTime = 1000 + Math.random() * 2000; // 1-3 seconds
                                 setTimeout(() => {
@@ -1395,11 +1644,6 @@ Key Learning Points:`;
                             
                             // Start typing animation with callback for when it completes
                             typeWords(newEntry.uniqueId, response.text, () => {
-                                // Speak the message if it's from speaker B and voice activation is enabled
-                                if (response.speaker === 'B' && voiceActivationRef.current) {
-                                    speakText(response.text);
-                                }
-                                
                                 // After typing completes, wait 1-3 seconds before showing next response
                                 const postResponseThinkingTime = 1000 + Math.random() * 2000; // 1-3 seconds
                                 setTimeout(() => {
@@ -1462,6 +1706,15 @@ Key Learning Points:`;
 
             return (
                 <>
+                    {/* Landing Page */}
+                    {showLandingPage && (
+                        <LandingPage 
+                            onStartDownload={handleStartDownload}
+                            isDownloading={isDownloading}
+                            downloadStatus={downloadStatus}
+                        />
+                    )}
+
                     {/* Summary Modal */}
                     {showSummary && summary && (
                         <SummaryModal 
@@ -1519,14 +1772,6 @@ Key Learning Points:`;
                             <div className="text-lg font-medium text-black">Settings</div>
                             <div className="w-6 h-6 cursor-pointer flex items-center justify-center text-telegram-gray text-2xl leading-none hover:text-black" onClick={() => setMenuOpen(false)}>×</div>
                         </div>
-                        <div className="py-3 px-4 flex items-center gap-3 cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50">
-                            <div className="w-6 h-6 flex items-center justify-center text-telegram-gray">🔊</div>
-                            <div className="flex-1 text-[15px] text-black">Read Messages Aloud</div>
-                            <div 
-                                className={`w-11 h-6 rounded-xl relative cursor-pointer transition-colors ${voiceActivationEnabled ? 'bg-telegram-blue' : 'bg-gray-300'} after:content-[''] after:absolute after:w-5 after:h-5 after:rounded-full after:bg-white after:top-0.5 after:left-0.5 after:transition-transform after:shadow-[0_1px_3px_rgba(0,0,0,0.3)] ${voiceActivationEnabled ? 'after:translate-x-5' : ''}`}
-                                onClick={handleVoiceActivationToggle}
-                            />
-                        </div>
                         <div className="py-3 px-4 flex items-center gap-3 cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50" onClick={handleBackToConfig}>
                             <div className="w-6 h-6 flex items-center justify-center text-telegram-gray">⚙️</div>
                             <div className="flex-1 text-[15px] text-black">Back to Configuration</div>
@@ -1575,19 +1820,38 @@ Key Learning Points:`;
                                     filteredConversations.map((conversation) => (
                                         <div
                                             key={conversation.id}
-                                            className={`py-2.5 px-3 flex items-center gap-3 cursor-pointer border-b border-gray-100 transition-colors relative ${activeConversationId === conversation.id ? 'bg-[#e8f4f8] before:content-[""] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 before:bg-telegram-blue' : 'hover:bg-gray-50'}`}
+                                            className={`py-2.5 px-3 flex items-center gap-3 cursor-pointer border-b border-gray-100 transition-colors relative group ${activeConversationId === conversation.id ? 'bg-[#e8f4f8] before:content-[""] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 before:bg-telegram-blue' : 'hover:bg-gray-50'}`}
                                             onClick={() => handleConversationSelect(conversation.id)}
                                         >
-                                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-lg font-medium flex-shrink-0">
-                                                {getAvatarInitials(conversation.config)}
-                                            </div>
+                                            {conversation.config?.profile?.picture ? (
+                                                <img 
+                                                    src={conversation.config.profile.picture} 
+                                                    alt="Profile" 
+                                                    className="w-12 h-12 rounded-full object-cover flex-shrink-0 border border-gray-200"
+                                                />
+                                            ) : (
+                                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-lg font-medium flex-shrink-0">
+                                                    {getAvatarInitials(conversation.config)}
+                                                </div>
+                                            )}
                                             <div className="flex-1 min-w-0 flex flex-col gap-1">
                                                 <div className="flex items-center justify-between gap-2">
                                                     <div className="text-[15px] font-medium text-black leading-5 overflow-hidden text-ellipsis whitespace-nowrap">
                                                         {conversation.config?.profile?.name || `${conversation.config?.characters?.A?.name || 'A'} & ${conversation.config?.characters?.B?.name || 'B'}`}
                                                     </div>
-                                                    <div className="text-[13px] text-telegram-gray flex-shrink-0">
-                                                        {formatTime(conversation.lastMessageTime || conversation.createdAt || new Date().toISOString())}
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="text-[13px] text-telegram-gray flex-shrink-0">
+                                                            {formatTime(conversation.lastMessageTime || conversation.createdAt || new Date().toISOString())}
+                                                        </div>
+                                                        <button
+                                                            className="w-6 h-6 flex items-center justify-center text-telegram-gray hover:text-red-500 hover:bg-red-50 rounded-full transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0"
+                                                            onClick={(e) => handleDeleteConversation(conversation.id, e)}
+                                                            title="Delete conversation"
+                                                        >
+                                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                            </svg>
+                                                        </button>
                                                     </div>
                                                 </div>
                                                 <div className="text-sm text-telegram-gray leading-[18px] overflow-hidden text-ellipsis whitespace-nowrap">
