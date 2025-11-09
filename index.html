@@ -157,14 +157,14 @@
 You are a casual, optimistic person named A talking about existence.
 You're curious and hopeful. You think life has meaning we create ourselves.
 Talk like a normal person having a conversation - use casual language, contractions, and natural speech.
-Keep it brief (1-2 sentences) and conversational.
+Keep it brief and conversational.
 `.trim();
 
         const DEFAULT_PHILOSOPHER_B_PROMPT = `
 You are a casual, skeptical person named B talking about existence.
 You're a bit cynical and question if anything really matters.
 Talk like a normal person having a conversation - use casual language, contractions, and natural speech.
-Keep it brief (1-2 sentences) and conversational.
+Keep it brief and conversational.
 `.trim();
 
         // ConfigModal Component
@@ -925,37 +925,6 @@ Keep it brief (1-2 sentences) and conversational.
                     setShowLandingPage(true);
                 } else {
                     setModelDownloaded(true);
-                    // If model is already downloaded, initialize engine if not already initialized
-                    if (!engineRef.current) {
-                        async function initExistingEngine() {
-                            try {
-                                if (!window.webllm) {
-                                    let attempts = 0;
-                                    while (!window.webllm && attempts < 100) {
-                                        await new Promise(r => setTimeout(r, 100));
-                                        attempts++;
-                                    }
-                                }
-                                if (window.webllm) {
-                                    const { CreateMLCEngine } = window.webllm;
-                                    const engine = await CreateMLCEngine(MODEL_ID, {
-                                        initProgressCallback: (report) => {
-                                            // Silent initialization for already downloaded model
-                                        },
-                                        logLevel: "INFO",
-                                    });
-                                    engineRef.current = engine;
-                                }
-                            } catch (err) {
-                                console.error("Error initializing existing engine:", err);
-                                // If initialization fails, show landing page
-                                setShowLandingPage(true);
-                                setModelDownloaded(false);
-                                localStorage.removeItem('llmtalk_model_downloaded');
-                            }
-                        }
-                        initExistingEngine();
-                    }
                     // If model is already downloaded, show config modal if no conversations exist
                     const savedConversations = localStorage.getItem('llmtalk_conversations');
                     if (!savedConversations || JSON.parse(savedConversations).length === 0) {
@@ -1428,7 +1397,14 @@ Key Learning Points:`;
                         }
 
                         const { CreateMLCEngine } = window.webllm;
-                        setStatus("Downloading neural network to browser cache (this may take a while)...");
+                        
+                        // Check if model is already downloaded
+                        const isModelDownloaded = checkModelDownloaded();
+                        if (!isModelDownloaded) {
+                            setStatus("Downloading neural network to browser cache (this may take a while)...");
+                        } else {
+                            setStatus("Loading model from cache...");
+                        }
 
                         // Create engine with explicit init options to aid debugging if it fails
                         const engine = await CreateMLCEngine(MODEL_ID, {
@@ -1439,6 +1415,8 @@ Key Learning Points:`;
                         });
 
                         engineRef.current = engine;
+                        setModelDownloaded(true);
+                        localStorage.setItem('llmtalk_model_downloaded', 'true');
                         setStatus(""); // Clear status on success
 
                         // Don't automatically start conversation - wait for user to press play
